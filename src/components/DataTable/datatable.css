@@ -1,0 +1,22 @@
+/*
+  Add these @layer components rules to your global CSS file (index.css or app.css).
+  They define the reusable button classes used throughout DataTable.
+  Tailwind v4 compatible.
+*/
+
+@layer components {
+  /* Toolbar text buttons */
+  .dt-toolbar-btn {
+    @apply flex items-center gap-1.5 rounded-lg border border-[#E8EAED] bg-white px-2.5 py-1.5 text-xs text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  /* Toolbar icon-only buttons */
+  .dt-toolbar-btn-icon {
+    @apply flex h-7 w-7 items-center justify-center rounded-lg border border-[#E8EAED] bg-white text-gray-500 transition-colors hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700;
+  }
+
+  /* Pagination page buttons */
+  .dt-page-btn {
+    @apply flex h-7 items-center justify-center rounded-lg border border-[#E8EAED] bg-white px-2 text-[11px] text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-50;
+  }
+}
