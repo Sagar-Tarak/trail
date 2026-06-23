@@ -1,3 +1,4 @@
+import axios, { AxiosError, type AxiosInstance } from "axios";
 import type { ApiPage, ApiError, ApiQueryParams } from "./types";
 import { toQueryString } from "./queryUtils";
 
@@ -26,13 +27,26 @@ export class ApiRequestError extends Error {
   }
 }
 
-async function parseErrorBody(res: Response): Promise<ApiError> {
-  try {
-    return await res.json();
-  } catch {
-    return { message: res.statusText || "Unknown error", status: res.status };
+export const apiClient: AxiosInstance = axios.create({
+  baseURL: API_BASE,
+  headers: {
+    "Content-Type": "application/json",
+    // uncomment when auth is wired up:
+    // Authorization: `Bearer ${getToken()}`,
+  },
+});
+
+// Centralised response error → ApiRequestError conversion
+apiClient.interceptors.response.use(
+  (res) => res,
+  (err: AxiosError<ApiError>) => {
+    const status = err.response?.status ?? 0;
+    const body = err.response?.data;
+    const code = body?.code ?? "UNKNOWN";
+    const message = body?.message ?? err.message ?? "Unknown error";
+    return Promise.reject(new ApiRequestError(status, code, message));
   }
-}
+);
 
 export async function apiFetch<T>(
   route: string,
@@ -45,32 +59,20 @@ export async function apiFetch<T>(
     return mock(params, signal) as Promise<ApiPage<T>>;
   }
 
-  const url = `${API_BASE}${route}?${toQueryString(params)}`;
-
-  const res = await fetch(url, {
-    signal,
-    headers: {
-      "Content-Type": "application/json",
-      // uncomment when auth is wired up:
-      // Authorization: `Bearer ${getToken()}`,
-    },
-  });
-
-  if (!res.ok) {
-    const err = await parseErrorBody(res);
-    throw new ApiRequestError(res.status, err.code ?? "UNKNOWN", err.message);
-  }
+  const { data: json } = await apiClient.get<Record<string, unknown>>(
+    `${route}?${toQueryString(params)}`,
+    { signal }
+  );
 
   // our backend wraps paginated responses: { statusCode, data, count, paginationMetadata, message }
   // unwrap it into the flat ApiPage shape the frontend expects
-  const json = (await res.json()) as Record<string, unknown>;
   if (json.paginationMetadata) {
     const meta = json.paginationMetadata as Record<string, unknown>;
     return {
       items: (json.data ?? []) as T[],
       total: (meta.totalCount ?? meta.total) as number,
       page: (meta.pageNumber ?? meta.page) as number,
-      pageSize: (meta.pageSize) as number,
+      pageSize: meta.pageSize as number,
       hasMore: (meta.hasNextPage ?? meta.hasMore) as boolean,
       nextCursor: (meta.nextCursor ?? null) as string | null,
       totalIsEstimate: meta.totalIsEstimate as boolean | undefined,

@@ -19,6 +19,12 @@ export const DENSITY_CELL_CLS: Record<DensityMode, string> = {
   comfortable: "px-3 py-3.5",
 };
 
+/** Pixel row height by density — must match DENSITY_CELL_CLS vertical padding */
+export const DENSITY_ROW_HEIGHT_PX: Record<DensityMode, number> = {
+  compact: 37,
+  comfortable: 53,
+};
+
 export const SKELETON_ROW_COUNT = 8;
 
 export const SELECTION_COL_ID = "__selection__";

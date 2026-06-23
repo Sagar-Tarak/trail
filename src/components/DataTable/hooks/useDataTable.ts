@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -22,6 +22,7 @@ import type {
 } from "../types/data-table.types";
 import { DEFAULT_PAGE_SIZE } from "../constants";
 import { createSelectionColumn } from "../utils/selectionColumn";
+import { SELECTION_COL_ID, ACTIONS_COL_ID } from "../constants";
 
 export function useDataTable<TData>(
   props: DataTableProps<TData>
@@ -110,6 +111,21 @@ export function useDataTable<TData>(
 
   useTablePersistence(table, tableId);
 
+  const SYSTEM_COL_IDS = new Set([SELECTION_COL_ID, ACTIONS_COL_ID]);
+
+  // Stable list of visible data column IDs — derived after table is built so it
+  // reflects current columnVisibility state. Exclude system cols (checkbox, actions).
+  const visibleColumnIds = useMemo(
+    () =>
+      table
+        .getVisibleLeafColumns()
+        .map((c) => c.id)
+        .filter((id) => !SYSTEM_COL_IDS.has(id)),
+    // columnVisibility in deps ensures this updates when user shows/hides columns
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [columnVisibility, table]
+  );
+
   // rowSelection in deps because table.getSelectedRowModel() reads internal state
   // that doesn't trigger re-renders on its own
   const selectedRows = useMemo<Row<TData>[]>(
@@ -136,5 +152,6 @@ export function useDataTable<TData>(
     onRowClick: props.onRowClick,
     selectedRows,
     clearSelection,
+    visibleColumnIds,
   };
 }

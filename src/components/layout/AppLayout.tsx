@@ -37,9 +37,9 @@ export function AppLayout({ children, title, onNavigate }: AppLayoutProps) {
       <div className="flex flex-1 flex-col overflow-hidden">
         <Navbar title={title} onMenuToggle={toggleSidebar} sidebarCollapsed={collapsed} />
 
-        {/* max-w-7xl keeps content readable on wide monitors */}
+        {/* max-w-[1600px] keeps content readable on wide monitors while allowing tables more horizontal breathing room */}
         <main className="flex-1 overflow-y-auto p-6">
-          <div className="mx-auto max-w-7xl">{children}</div>
+          <div className="mx-auto max-w-[1600px]">{children}</div>
         </main>
       </div>
     </div>

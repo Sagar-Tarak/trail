@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import type { DataTableProps } from "./types/data-table.types";
 import { useDataTable } from "./hooks/useDataTable";
 import { TableToolbar } from "./components/TableToolbar";
@@ -41,6 +41,8 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
   const handleResetFilters = useCallback(() => {
     onFiltersChange?.({});
   }, [onFiltersChange]);
+
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const ctx = useDataTable(props);
   const { table, query, density } = ctx;
@@ -86,7 +88,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
         </div>
       )}
 
-      <div className="overflow-auto">
+      <div ref={scrollRef} className="overflow-auto">
         <table
           className="w-full table-auto border-collapse"
           aria-label="Data table"
@@ -112,7 +114,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
               description={emptyStateDescription}
             />
           )}
-          {showData && <TableBody ctx={ctx} />}
+          {showData && <TableBody ctx={ctx} scrollRef={scrollRef} />}
         </table>
       </div>
 

@@ -80,4 +80,6 @@ export interface DataTableContext<TData> {
   onRowClick?: (row: Row<TData>) => void;
   selectedRows: Row<TData>[];
   clearSelection: () => void;
+  /** IDs of currently visible data columns (excludes system cols like selection). Pass to API to limit fields returned. */
+  visibleColumnIds: string[];
 }
