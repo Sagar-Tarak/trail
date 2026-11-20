@@ -8,7 +8,8 @@ import type { ApiPage, ApiError, ApiQueryParams } from "./types";
 import { toQueryString } from "./queryUtils";
 
 // set VITE_API_BASE_URL in .env for production, e.g. https://api.yourapp.com
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "/trio-trail/api";
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL || "/trio-trail/api/v1";
 
 export class ApiRequestError extends Error {
   readonly status: number;

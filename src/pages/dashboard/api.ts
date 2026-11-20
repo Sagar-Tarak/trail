@@ -45,7 +45,7 @@ export interface DashboardData {
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
 
 export async function fetchDashboardData(): Promise<DashboardData> {
-  const res = await fetch(`${API_BASE}/api/v1/dashboard`, {
+  const res = await fetch(`${API_BASE}/dashboard`, {
     headers: { "Content-Type": "application/json" },
   });
   if (!res.ok) throw new Error(`Dashboard fetch failed: ${res.status}`);
