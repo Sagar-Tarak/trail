@@ -6,10 +6,18 @@ const STATUS_COLORS: Record<UserStatus, string> = {
   suspended: "text-red-600",
 };
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="space-y-0.5">
-      <dt className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">{label}</dt>
+      <dt className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+        {label}
+      </dt>
       <dd className="text-sm text-gray-800">{children}</dd>
     </div>
   );
@@ -27,17 +35,29 @@ export function UserDrawer({ record, onClose }: UserDrawerProps) {
       <div className="mb-6 flex items-center gap-4">
         <div className="relative">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-indigo-100 text-xl font-bold text-indigo-700">
-            {record.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+            {record.name
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .slice(0, 2)}
           </div>
-          <span className={`absolute -bottom-0.5 -right-0.5 text-xs font-bold capitalize ${STATUS_COLORS[record.status]}`} />
+          <span
+            className={`absolute -bottom-0.5 -right-0.5 text-xs font-bold capitalize ${STATUS_COLORS[record.status]}`}
+          />
         </div>
         <div>
           <h4 className="text-base font-bold text-gray-900">{record.name}</h4>
           <p className="text-sm text-gray-500">{record.email}</p>
           <div className="mt-1 flex items-center gap-2">
-            <span className={`text-xs font-semibold capitalize ${STATUS_COLORS[record.status]}`}>{record.status}</span>
+            <span
+              className={`text-xs font-semibold capitalize ${STATUS_COLORS[record.status]}`}
+            >
+              {record.status}
+            </span>
             <span className="text-gray-300">·</span>
-            <span className="text-xs font-medium capitalize text-gray-500">{record.role}</span>
+            <span className="text-xs font-medium capitalize text-gray-500">
+              {record.role}
+            </span>
           </div>
         </div>
       </div>
@@ -45,7 +65,9 @@ export function UserDrawer({ record, onClose }: UserDrawerProps) {
       {/* Stats row */}
       <div className="mb-6 grid grid-cols-2 gap-3">
         <div className="rounded-xl bg-indigo-50 px-4 py-3 text-center">
-          <p className="text-xl font-bold text-indigo-700">{record.eventCount.toLocaleString()}</p>
+          <p className="text-xl font-bold text-indigo-700">
+            {record.eventCount.toLocaleString()}
+          </p>
           <p className="text-[11px] text-indigo-500">Total Events</p>
         </div>
         <div className="rounded-xl bg-gray-50 px-4 py-3 text-center">

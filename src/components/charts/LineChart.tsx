@@ -8,7 +8,12 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import { TOOLTIP_STYLE, TOOLTIP_LABEL_STYLE, AXIS_STYLE, PALETTE } from "./chartTheme";
+import {
+  TOOLTIP_STYLE,
+  TOOLTIP_LABEL_STYLE,
+  AXIS_STYLE,
+  PALETTE,
+} from "./chartTheme";
 
 export interface LineSeries {
   key: string;
@@ -46,21 +51,36 @@ export function LineChart({
         <div className="mb-5 flex items-start justify-between gap-4">
           {(title || subtitle) && (
             <div>
-              {title && <h3 className="text-sm font-semibold text-gray-800">{title}</h3>}
-              {subtitle && <p className="mt-0.5 text-xs text-gray-400">{subtitle}</p>}
+              {title && (
+                <h3 className="text-sm font-semibold text-gray-800">{title}</h3>
+              )}
+              {subtitle && (
+                <p className="mt-0.5 text-xs text-gray-400">{subtitle}</p>
+              )}
             </div>
           )}
-          {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
+          {actions && (
+            <div className="flex shrink-0 items-center gap-2">{actions}</div>
+          )}
         </div>
       )}
 
       <ResponsiveContainer width="100%" height={height}>
-        <ReLineChart data={data} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" vertical={false} />
+        <ReLineChart
+          data={data}
+          margin={{ top: 4, right: 4, left: -16, bottom: 0 }}
+        >
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke="#f3f4f6"
+            vertical={false}
+          />
           <XAxis dataKey={xKey} {...AXIS_STYLE} dy={6} />
           <YAxis
             {...AXIS_STYLE}
-            tickFormatter={(v: number) => (v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v))}
+            tickFormatter={(v: number) =>
+              v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)
+            }
             width={44}
           />
           <Tooltip
@@ -72,7 +92,13 @@ export function LineChart({
             }}
             cursor={{ stroke: "#e5e7eb", strokeWidth: 1 }}
           />
-          {showLegend && <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12 }} />}
+          {showLegend && (
+            <Legend
+              iconType="circle"
+              iconSize={8}
+              wrapperStyle={{ fontSize: 12 }}
+            />
+          )}
           {series.map((s, si) => (
             <Line
               key={s.key}

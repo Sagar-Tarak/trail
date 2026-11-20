@@ -7,15 +7,15 @@ interface Props {
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   success: { label: "Success", color: "#10b981" },
-  info:    { label: "Info",    color: "#6366f1" },
+  info: { label: "Info", color: "#6366f1" },
   warning: { label: "Warning", color: "#f59e0b" },
-  error:   { label: "Error",   color: "#f43f5e" },
+  error: { label: "Error", color: "#f43f5e" },
 };
 
 export function StatusDonut({ data }: Props) {
   const total = data.reduce((s, d) => s + d.count, 0);
   const successPct = Math.round(
-    ((data.find((d) => d.status === "success")?.count ?? 0) / total) * 100
+    ((data.find((d) => d.status === "success")?.count ?? 0) / total) * 100,
   );
 
   const slices = data.map((d) => ({

@@ -11,6 +11,6 @@ export interface Activity {
   status: ActivityStatus;
   severity: ActivitySeverity;
   ipAddress: string;
-  duration: number;   // ms
+  duration: number; // ms
   recordId?: string;
 }

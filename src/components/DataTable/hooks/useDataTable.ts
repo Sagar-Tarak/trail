@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -25,7 +25,7 @@ import { createSelectionColumn } from "../utils/selectionColumn";
 import { SELECTION_COL_ID, ACTIONS_COL_ID } from "../constants";
 
 export function useDataTable<TData>(
-  props: DataTableProps<TData>
+  props: DataTableProps<TData>,
 ): DataTableContext<TData> {
   const {
     columns,
@@ -45,10 +45,10 @@ export function useDataTable<TData>(
   const [globalSearch, setGlobalSearch] = useState("");
 
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
-    prefs.columnVisibility
+    prefs.columnVisibility,
   );
   const [columnPinning, setColumnPinning] = useState<ColumnPinningState>(
-    prefs.columnPinning
+    prefs.columnPinning,
   );
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -63,7 +63,7 @@ export function useDataTable<TData>(
     (d: DensityMode) => {
       setDensityInStore(tableId, d);
     },
-    [setDensityInStore, tableId]
+    [setDensityInStore, tableId],
   );
 
   // checkbox column always goes first if selection is enabled
@@ -123,7 +123,7 @@ export function useDataTable<TData>(
         .filter((id) => !SYSTEM_COL_IDS.has(id)),
     // columnVisibility in deps ensures this updates when user shows/hides columns
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [columnVisibility, table]
+    [columnVisibility, table],
   );
 
   // rowSelection in deps because table.getSelectedRowModel() reads internal state
@@ -131,7 +131,7 @@ export function useDataTable<TData>(
   const selectedRows = useMemo<Row<TData>[]>(
     () => table.getSelectedRowModel().rows,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [rowSelection, table]
+    [rowSelection, table],
   );
 
   const clearSelection = useCallback(() => {

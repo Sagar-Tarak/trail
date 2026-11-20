@@ -1,6 +1,10 @@
 import { activityColumns } from "./activity.columns";
 import { activityFilters } from "./activity.filters";
-import { activityRowActions, activityToolbarActions, activityBulkActions } from "./activity.actions.tsx";
+import {
+  activityRowActions,
+  activityToolbarActions,
+  activityBulkActions,
+} from "./activity.actions.tsx";
 import { useActivitiesQuery } from "./activity.query";
 import { ActivityDrawer } from "./activity.drawer";
 import type { Activity } from "./activity.types";
@@ -8,7 +12,8 @@ import type { MasterTableConfig } from "@/layouts/MasterTablePage";
 
 export const activityConfig: MasterTableConfig<Activity> = {
   title: "Activities",
-  subtitle: "All audit events across modules — searchable, filterable, exportable.",
+  subtitle:
+    "All audit events across modules — searchable, filterable, exportable.",
   breadcrumbs: [{ label: "Home" }, { label: "Activities" }],
   rowKey: "id",
   // bump this key if you change column/filter shape to avoid reading stale localStorage

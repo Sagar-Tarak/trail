@@ -28,7 +28,7 @@ export function PageShell({
   noSpacing = false,
 }: PageShellProps) {
   return (
-    <div className="flex h-full w-full flex-col">
+    <div className="trail-page flex min-w-0 w-full flex-col">
       {/* ── Breadcrumbs ── */}
       {breadcrumbs && breadcrumbs.length > 0 && (
         <nav className="mb-3 flex items-center gap-1.5 text-xs text-gray-400">
@@ -44,7 +44,13 @@ export function PageShell({
                   {crumb.label}
                 </a>
               ) : (
-                <span className={i === breadcrumbs.length - 1 ? "text-gray-700 font-medium" : ""}>
+                <span
+                  className={
+                    i === breadcrumbs.length - 1
+                      ? "text-gray-700 font-medium"
+                      : ""
+                  }
+                >
                   {crumb.label}
                 </span>
               )}
@@ -54,10 +60,14 @@ export function PageShell({
       )}
 
       {/* ── Page header ── */}
-      <div className="mb-6 flex items-start justify-between gap-4">
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 leading-tight">{title}</h1>
-          {subtitle && <p className="mt-0.5 text-sm text-gray-500">{subtitle}</p>}
+          <h1 className="text-2xl font-bold text-gray-900 leading-tight">
+            {title}
+          </h1>
+          {subtitle && (
+            <p className="mt-0.5 text-sm text-gray-500">{subtitle}</p>
+          )}
         </div>
         {actions && (
           <div className="flex shrink-0 items-center gap-2">{actions}</div>
@@ -65,7 +75,9 @@ export function PageShell({
       </div>
 
       {/* ── Page content ── */}
-      <div className={noSpacing ? "" : "space-y-6"}>{children}</div>
+      <div className={noSpacing ? "" : "flex min-w-0 flex-col gap-6"}>
+        {children}
+      </div>
     </div>
   );
 }

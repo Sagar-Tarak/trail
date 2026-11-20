@@ -11,17 +11,27 @@ import { TableCore } from "./TableCore";
 
 // basic CSV export — handles quoting but nothing fancy
 // if we ever need xlsx or streaming exports this should move to a utility
-function exportCSV<T extends object>(data: T[], columns: ColumnDef<T>[], filename: string) {
+function exportCSV<T extends object>(
+  data: T[],
+  columns: ColumnDef<T>[],
+  filename: string,
+) {
   const headers = columns.map((c) => `"${String(c.title ?? c.key)}"`).join(",");
-  const rows = data.map((record) =>
-    columns.map((col) => {
-      const key = (col.dataIndex ?? col.key) as keyof T;
-      const val = String(record[key] ?? "").replace(/"/g, '""');
-      return `"${val}"`;
-    }).join(",")
-  ).join("\n");
+  const rows = data
+    .map((record) =>
+      columns
+        .map((col) => {
+          const key = (col.dataIndex ?? col.key) as keyof T;
+          const val = String(record[key] ?? "").replace(/"/g, '""');
+          return `"${val}"`;
+        })
+        .join(","),
+    )
+    .join("\n");
 
-  const blob = new Blob([`${headers}\n${rows}`], { type: "text/csv;charset=utf-8;" });
+  const blob = new Blob([`${headers}\n${rows}`], {
+    type: "text/csv;charset=utf-8;",
+  });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -38,7 +48,13 @@ function Breadcrumbs({ items }: { items: Array<{ label: string }> }) {
       {items.map((item, i) => (
         <span key={i} className="flex items-center gap-1.5">
           {i > 0 && <RightOutlined style={{ fontSize: 10 }} />}
-          <span className={i === items.length - 1 ? "font-medium text-gray-600" : ""}>{item.label}</span>
+          <span
+            className={
+              i === items.length - 1 ? "font-medium text-gray-600" : ""
+            }
+          >
+            {item.label}
+          </span>
         </span>
       ))}
     </nav>
@@ -49,7 +65,9 @@ interface MasterTablePageProps<T extends object> {
   config: MasterTableConfig<T>;
 }
 
-export function MasterTablePage<T extends object>({ config }: MasterTablePageProps<T>) {
+export function MasterTablePage<T extends object>({
+  config,
+}: MasterTablePageProps<T>) {
   const ctrl = useTableController(config);
 
   const hasBulkActions = (config.bulkActions?.length ?? 0) > 0;
@@ -57,7 +75,11 @@ export function MasterTablePage<T extends object>({ config }: MasterTablePagePro
 
   const handleExport = () => {
     // slugify the page title for the filename
-    exportCSV(ctrl.queryResult.data, ctrl.visibleColumns, config.title.toLowerCase().replace(/\s+/g, "-"));
+    exportCSV(
+      ctrl.queryResult.data,
+      ctrl.visibleColumns,
+      config.title.toLowerCase().replace(/\s+/g, "-"),
+    );
   };
 
   return (
@@ -92,7 +114,7 @@ export function MasterTablePage<T extends object>({ config }: MasterTablePagePro
       </div>
 
       {/* only show saved views if filters are configured */}
-      {(config.filters && config.filters.length > 0) && (
+      {config.filters && config.filters.length > 0 && (
         <div className="mb-3">
           <SavedViews
             views={ctrl.savedViews}

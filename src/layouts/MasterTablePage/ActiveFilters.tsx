@@ -6,13 +6,16 @@ function getLabel(def: FilterDef, value: unknown): string {
 
   if (def.type === "multi-select" && Array.isArray(value)) {
     const labels = (value as string[]).map(
-      (v) => def.options?.find((o) => o.value === v)?.label ?? v
+      (v) => def.options?.find((o) => o.value === v)?.label ?? v,
     );
     return labels.join(", ");
   }
 
   if (def.type === "select") {
-    return def.options?.find((o) => o.value === String(value))?.label ?? String(value);
+    return (
+      def.options?.find((o) => o.value === String(value))?.label ??
+      String(value)
+    );
   }
 
   if (def.type === "date-range" && typeof value === "object") {
@@ -25,7 +28,8 @@ function getLabel(def: FilterDef, value: unknown): string {
 
   if (def.type === "number-range" && typeof value === "object") {
     const r = value as { min?: number; max?: number };
-    if (r.min !== undefined && r.max !== undefined) return `${r.min} – ${r.max}`;
+    if (r.min !== undefined && r.max !== undefined)
+      return `${r.min} – ${r.max}`;
     if (r.min !== undefined) return `≥ ${r.min}`;
     if (r.max !== undefined) return `≤ ${r.max}`;
     return "";
@@ -45,7 +49,12 @@ interface ActiveFiltersProps {
   onClearAll: () => void;
 }
 
-export function ActiveFilters({ filters, values, onRemove, onClearAll }: ActiveFiltersProps) {
+export function ActiveFilters({
+  filters,
+  values,
+  onRemove,
+  onClearAll,
+}: ActiveFiltersProps) {
   const active = filters.filter((f) => {
     const v = values[f.key];
     if (v === null || v === undefined || v === "") return false;

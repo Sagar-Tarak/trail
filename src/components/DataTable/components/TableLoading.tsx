@@ -16,10 +16,7 @@ export function TableLoading({ colCount, density }: TableLoadingProps) {
           aria-hidden="true"
         >
           {Array.from({ length: colCount }).map((_, colIdx) => (
-            <td
-              key={colIdx}
-              className={DENSITY_CELL_CLS[density]}
-            >
+            <td key={colIdx} className={DENSITY_CELL_CLS[density]}>
               <div
                 className="h-3 animate-pulse rounded-full bg-gray-100"
                 style={{

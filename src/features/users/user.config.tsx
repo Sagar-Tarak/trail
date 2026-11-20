@@ -3,7 +3,12 @@ import { userFilters } from "./user.filters";
 import { useUsersQuery } from "./user.query";
 import { UserDrawer } from "./user.drawer";
 import type { User } from "./user.types";
-import type { MasterTableConfig, RowAction, ToolbarAction, BulkAction } from "@/layouts/MasterTablePage";
+import type {
+  MasterTableConfig,
+  RowAction,
+  ToolbarAction,
+  BulkAction,
+} from "@/layouts/MasterTablePage";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 
 const rowActions: RowAction<User>[] = [

@@ -1,8 +1,14 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { VisibilityState, ColumnPinningState } from "@tanstack/react-table";
+import type {
+  VisibilityState,
+  ColumnPinningState,
+} from "@tanstack/react-table";
 import type { DensityMode } from "../components/DataTable/types/data-table.types";
-import { DEFAULT_PAGE_SIZE, DEFAULT_DENSITY } from "../components/DataTable/constants";
+import {
+  DEFAULT_PAGE_SIZE,
+  DEFAULT_DENSITY,
+} from "../components/DataTable/constants";
 
 interface TablePrefs {
   columnVisibility: VisibilityState;
@@ -30,8 +36,10 @@ const defaultPrefs = (): TablePrefs => ({
   zebraRows: false,
 });
 
-const ensureTable = (tables: Record<string, TablePrefs>, tableId: string): TablePrefs =>
-  tables[tableId] ?? defaultPrefs();
+const ensureTable = (
+  tables: Record<string, TablePrefs>,
+  tableId: string,
+): TablePrefs => tables[tableId] ?? defaultPrefs();
 
 export const useTableStore = create<TableStoreState>()(
   persist(
@@ -44,7 +52,10 @@ export const useTableStore = create<TableStoreState>()(
         set((s) => ({
           tables: {
             ...s.tables,
-            [tableId]: { ...ensureTable(s.tables, tableId), columnVisibility: visibility },
+            [tableId]: {
+              ...ensureTable(s.tables, tableId),
+              columnVisibility: visibility,
+            },
           },
         })),
 
@@ -52,7 +63,10 @@ export const useTableStore = create<TableStoreState>()(
         set((s) => ({
           tables: {
             ...s.tables,
-            [tableId]: { ...ensureTable(s.tables, tableId), columnPinning: pinning },
+            [tableId]: {
+              ...ensureTable(s.tables, tableId),
+              columnPinning: pinning,
+            },
           },
         })),
 
@@ -82,6 +96,6 @@ export const useTableStore = create<TableStoreState>()(
     }),
     {
       name: "trail-table-prefs",
-    }
-  )
+    },
+  ),
 );

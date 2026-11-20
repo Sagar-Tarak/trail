@@ -26,20 +26,20 @@ Trail is a React + TypeScript admin dashboard. It gives you a feature-complete s
 
 ## 1. Tech Stack
 
-| Layer | Library | Why |
-|---|---|---|
-| UI framework | React 19 | — |
-| Language | TypeScript 6 | — |
-| Routing | React Router v7 | Data router (`createBrowserRouter`) |
-| Server state | TanStack Query v5 | Caching, prefetch, stale-while-revalidate |
-| Table engine | TanStack Table v8 | Headless, server-side mode |
-| Row virtualization | TanStack Virtual v3 | Handles 100k-row tables smoothly |
-| Client state | Zustand v5 | Auth, layout, table preference persistence |
-| HTTP client | Axios | Mock registry + interceptors |
-| Component library | Ant Design v5 | Drawer, icons, form primitives |
-| Styling | Tailwind CSS v4 | Utility-first, no CSS files |
-| Charts | Recharts v3 | Dashboard visualizations |
-| Build | Vite 8 | Fast HMR, code splitting per route |
+| Layer              | Library             | Why                                        |
+| ------------------ | ------------------- | ------------------------------------------ |
+| UI framework       | React 19            | —                                          |
+| Language           | TypeScript 6        | —                                          |
+| Routing            | React Router v7     | Data router (`createBrowserRouter`)        |
+| Server state       | TanStack Query v5   | Caching, prefetch, stale-while-revalidate  |
+| Table engine       | TanStack Table v8   | Headless, server-side mode                 |
+| Row virtualization | TanStack Virtual v3 | Handles 100k-row tables smoothly           |
+| Client state       | Zustand v5          | Auth, layout, table preference persistence |
+| HTTP client        | Axios               | Mock registry + interceptors               |
+| Component library  | Ant Design v5       | Drawer, icons, form primitives             |
+| Styling            | Tailwind CSS v4     | Utility-first, no CSS files                |
+| Charts             | Recharts v3         | Dashboard visualizations                   |
+| Build              | Vite 8              | Fast HMR, code splitting per route         |
 
 ---
 
@@ -177,11 +177,11 @@ Data flow per feature page:
 
 **Three layers of state:**
 
-| Layer | Tool | Examples |
-|---|---|---|
-| Server cache | React Query | paginated table data, dashboard stats |
-| Persistent UI | Zustand + localStorage | auth session, sidebar, column prefs |
-| Ephemeral UI | React `useState` | dropdowns, drawer open, search input |
+| Layer         | Tool                   | Examples                              |
+| ------------- | ---------------------- | ------------------------------------- |
+| Server cache  | React Query            | paginated table data, dashboard stats |
+| Persistent UI | Zustand + localStorage | auth session, sidebar, column prefs   |
+| Ephemeral UI  | React `useState`       | dropdowns, drawer open, search input  |
 
 ---
 
@@ -252,13 +252,13 @@ LoginPage.handleSubmit()
 const { user, isAuthenticated, login, logout } = useAuthStore();
 ```
 
-| Field | Type | Description |
-|---|---|---|
-| `user` | `User \| null` | Logged-in user (name, email, role, id) |
-| `tokens` | `AuthTokens \| null` | accessToken + expiresAt |
-| `isAuthenticated` | `boolean` | Derived from tokens presence |
-| `login(credentials)` | `async` | Calls API, stores result, throws on failure |
-| `logout()` | `async` | Clears state, best-effort server call |
+| Field                | Type                 | Description                                 |
+| -------------------- | -------------------- | ------------------------------------------- |
+| `user`               | `User \| null`       | Logged-in user (name, email, role, id)      |
+| `tokens`             | `AuthTokens \| null` | accessToken + expiresAt                     |
+| `isAuthenticated`    | `boolean`            | Derived from tokens presence                |
+| `login(credentials)` | `async`              | Calls API, stores result, throws on failure |
+| `logout()`           | `async`              | Clears state, best-effort server call       |
 
 ### Protecting new routes
 
@@ -300,19 +300,24 @@ apiClient.interceptors.request.use((config) => {
 Three Zustand stores, all with `persist` middleware:
 
 ### `useAuthStore` — `src/store/useAuthStore.ts`
+
 Auth state. See §6.
 
 ### `useLayoutStore` — `src/store/useLayoutStore.ts`
+
 ```ts
 const { sidebarCollapsed, toggleSidebar } = useLayoutStore();
 ```
+
 Persists to `trail-layout`. Controls sidebar width (w-14 collapsed, w-60 expanded).
 
 ### `useTableStore` — `src/store/useTableStore.ts`
+
 ```ts
 const { getPrefs, setColumnVisibility, setPageSize } = useTableStore();
 const prefs = getPrefs("activities-v1");
 ```
+
 Stores per-table column visibility, pinning, page size, density, and zebra rows. Key is the feature's `persistenceKey` (e.g., `"activities-v1"`). Bump the version suffix when you change the column schema to avoid stale localStorage.
 
 ---
@@ -344,7 +349,7 @@ buildApiParams({
   sortKey: "createdAt",
   sortDir: "desc",
   filters: { status: ["active"], module: "auth" },
-})
+});
 // → { page: 2, pageSize: 50, q: "alice", sort: "createdAt", dir: "desc",
 //     "f.status": '["active"]', "f.module": '"auth"' }
 ```
@@ -375,10 +380,10 @@ registerMock("/activities", fetchActivitiesFromServer);
 
 ### Mock datasets
 
-| File | Records | Details |
-|---|---|---|
-| `activities.mock.ts` | 10,000 | 16 users, 7 modules, 6 statuses, 6 severities, timestamps spread over last year |
-| `users.mock.ts` | 500 | 25 name templates, 4 roles, 3 statuses |
+| File                 | Records | Details                                                                         |
+| -------------------- | ------- | ------------------------------------------------------------------------------- |
+| `activities.mock.ts` | 10,000  | 16 users, 7 modules, 6 statuses, 6 severities, timestamps spread over last year |
+| `users.mock.ts`      | 500     | 25 name templates, 4 roles, 3 statuses                                          |
 
 ### `mockUtils.ts` helpers
 
@@ -411,8 +416,8 @@ A low-level TanStack Table wrapper. Use this when you need a table without the f
 ```tsx
 <DataTable
   tableId="my-table"
-  columns={columns}          // ColumnDef<T>[] from TanStack Table
-  queryResult={queryResult}  // { loading, error, data: ApiPage<T> }
+  columns={columns} // ColumnDef<T>[] from TanStack Table
+  queryResult={queryResult} // { loading, error, data: ApiPage<T> }
   params={params}
   onParamsChange={setParams}
   filterDrawer={<MyFilters />}
@@ -436,9 +441,9 @@ Rows are virtualized automatically when the row count exceeds 100. `@tanstack/re
 ### Key constants (`constants.ts`)
 
 ```ts
-DEFAULT_PAGE_SIZE = 20
-SEARCH_DEBOUNCE_MS = 300
-SKELETON_ROW_COUNT = 8
+DEFAULT_PAGE_SIZE = 20;
+SEARCH_DEBOUNCE_MS = 300;
+SKELETON_ROW_COUNT = 8;
 ```
 
 ---
@@ -454,7 +459,7 @@ The high-level orchestrator for full CRUD pages. Every feature page (Activities,
 ```ts
 interface MasterTableConfig<T> {
   title: string;
-  persistenceKey: string;     // localStorage key — bump version on schema change
+  persistenceKey: string; // localStorage key — bump version on schema change
   queryHook: (params) => QueryResult<T>;
   columns: ColumnDef<T>[];
   filters?: FilterDef[];
@@ -483,13 +488,13 @@ The brains behind MasterTablePage. It manages:
 
 ```ts
 type FilterType =
-  | "text"          // free text input
-  | "select"        // single value dropdown
-  | "multi-select"  // multi-value dropdown (stored as JSON array)
-  | "date"          // single date picker
-  | "date-range"    // from / to date pickers
-  | "boolean"       // Yes / No / Any toggle
-  | "number-range"  // min / max number inputs
+  | "text" // free text input
+  | "select" // single value dropdown
+  | "multi-select" // multi-value dropdown (stored as JSON array)
+  | "date" // single date picker
+  | "date-range" // from / to date pickers
+  | "boolean" // Yes / No / Any toggle
+  | "number-range"; // min / max number inputs
 ```
 
 ### Permissions
@@ -671,20 +676,21 @@ Auto-refetches every 60 seconds. Manual refresh button resets the "last updated"
 
 **Components:**
 
-| Component | Data |
-|---|---|
-| `StatCard` | KPI value + delta + sparkline |
+| Component            | Data                                              |
+| -------------------- | ------------------------------------------------- |
+| `StatCard`           | KPI value + delta + sparkline                     |
 | `ActivityTrendChart` | Line chart — events per day over the last 30 days |
-| `ModuleBarChart` | Bar chart — event count by module |
-| `StatusDonut` | Pie chart — event status distribution |
-| `RecentActivityFeed` | Last 10 events with user, action, timestamp |
-| `TopUsersCard` | Top 5 users by event count |
+| `ModuleBarChart`     | Bar chart — event count by module                 |
+| `StatusDonut`        | Pie chart — event status distribution             |
+| `RecentActivityFeed` | Last 10 events with user, action, timestamp       |
+| `TopUsersCard`       | Top 5 users by event count                        |
 
 ---
 
 ## 14. Connecting a Real Backend
 
 ### Auth
+
 See §6 — swap `src/lib/auth/auth.api.ts`.
 
 ### Table data
@@ -738,7 +744,7 @@ apiClient.interceptors.response.use(
       // call refresh endpoint, update store, retry
     }
     return Promise.reject(err);
-  }
+  },
 );
 ```
 
@@ -747,11 +753,13 @@ apiClient.interceptors.response.use(
 ## 15. Conventions & Rules
 
 ### File naming
+
 - Components: `PascalCase.tsx`
 - Hooks, utilities, types: `camelCase.ts`
 - Feature files: `featureName.purpose.ts` (e.g., `activity.columns.tsx`)
 
 ### Imports
+
 Always use the `@/` alias — never relative paths that go up more than one level.
 
 ```ts
@@ -763,21 +771,25 @@ import { useAuthStore } from "../../store/useAuthStore";
 ```
 
 ### `persistenceKey` versioning
+
 When you change a feature's column schema, filter shape, or preference structure, bump the version suffix:
 
 ```ts
-persistenceKey: "activities-v2"  // was "activities-v1"
+persistenceKey: "activities-v2"; // was "activities-v1"
 ```
 
 This prevents stale localStorage data from breaking the UI for existing users.
 
 ### No comments unless the WHY is non-obvious
+
 Don't comment what code does — name it well instead. Only add a comment when there's a hidden constraint, a workaround, or a subtle invariant a reader would miss.
 
 ### Adding icons
+
 All icons come from `@ant-design/icons`. Re-export from `src/components/layout/icons.tsx` if they're used across multiple layout components; import directly for feature-level usage.
 
 ### Environment variables
+
 Vite exposes only `VITE_*` prefixed variables to the client. Never put secrets in `.env`.
 
 ```env
@@ -785,4 +797,5 @@ VITE_API_BASE_URL=https://api.yourapp.com
 ```
 
 ### Column schema migration
+
 The `useTableStore` stores column visibility by column key. If you rename a key, existing localStorage entries will silently ignore the old key. Always bump `persistenceKey` when renaming columns.

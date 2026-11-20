@@ -27,7 +27,9 @@ export function buildApiParams(params: QueryParams): ApiQueryParams {
       if (value.length > 0) out[`f.${key}`] = value.join(",");
     } else if (typeof value === "object") {
       // date-range / number-range — expand as f.key.from / f.key.to or f.key.min / f.key.max
-      for (const [sub, subVal] of Object.entries(value as Record<string, unknown>)) {
+      for (const [sub, subVal] of Object.entries(
+        value as Record<string, unknown>,
+      )) {
         if (subVal !== null && subVal !== undefined && subVal !== "") {
           out[`f.${key}.${sub}`] = subVal;
         }

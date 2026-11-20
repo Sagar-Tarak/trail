@@ -21,7 +21,10 @@ const DENSITY_OPTIONS: { value: Density; label: string; icon: ReactNode }[] = [
   { value: "comfortable", label: "Comfortable", icon: <MenuOutlined /> },
 ];
 
-function useClickOutside(ref: React.RefObject<HTMLElement | null>, cb: () => void) {
+function useClickOutside(
+  ref: React.RefObject<HTMLElement | null>,
+  cb: () => void,
+) {
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) cb();
@@ -38,7 +41,12 @@ interface ColManagerProps<T> {
   onToggleAll: (visible: boolean) => void;
 }
 
-function ColumnManager<T>({ columns, visibility, onChange, onToggleAll }: ColManagerProps<T>) {
+function ColumnManager<T>({
+  columns,
+  visibility,
+  onChange,
+  onToggleAll,
+}: ColManagerProps<T>) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   useClickOutside(ref, () => setOpen(false));
@@ -50,7 +58,9 @@ function ColumnManager<T>({ columns, visibility, onChange, onToggleAll }: ColMan
       <button
         onClick={() => setOpen((v) => !v)}
         className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
-          open ? "border-indigo-300 bg-indigo-50 text-indigo-700" : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+          open
+            ? "border-indigo-300 bg-indigo-50 text-indigo-700"
+            : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
         }`}
       >
         <AppstoreOutlined />
@@ -60,21 +70,31 @@ function ColumnManager<T>({ columns, visibility, onChange, onToggleAll }: ColMan
       {open && (
         <div className="absolute right-0 top-full z-40 mt-1.5 w-52 rounded-xl border border-gray-200 bg-white py-1.5 shadow-xl">
           <div className="flex items-center justify-between border-b border-gray-100 px-3 pb-1.5">
-            <span className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">Columns</span>
-            <button onClick={() => onToggleAll(!allVisible)} className="text-[11px] font-medium text-indigo-600 hover:underline">
+            <span className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+              Columns
+            </span>
+            <button
+              onClick={() => onToggleAll(!allVisible)}
+              className="text-[11px] font-medium text-indigo-600 hover:underline"
+            >
               {allVisible ? "Hide all" : "Show all"}
             </button>
           </div>
           <div className="max-h-60 overflow-y-auto py-1">
             {columns.map((col) => (
-              <label key={col.key} className="flex cursor-pointer items-center gap-2.5 px-3 py-1.5 hover:bg-gray-50">
+              <label
+                key={col.key}
+                className="flex cursor-pointer items-center gap-2.5 px-3 py-1.5 hover:bg-gray-50"
+              >
                 <input
                   type="checkbox"
                   checked={visibility[col.key] !== false}
                   onChange={(e) => onChange(col.key, e.target.checked)}
                   className="h-3.5 w-3.5 accent-indigo-600"
                 />
-                <span className="text-xs text-gray-700">{col.title as string}</span>
+                <span className="text-xs text-gray-700">
+                  {col.title as string}
+                </span>
               </label>
             ))}
           </div>
@@ -101,7 +121,9 @@ function DensitySelector({ value, onChange }: DensityProps) {
         onClick={() => setOpen((v) => !v)}
         title="Row density"
         className={`flex items-center justify-center rounded-lg border px-2.5 py-1.5 text-sm transition-colors ${
-          open ? "border-indigo-300 bg-indigo-50 text-indigo-700" : "border-gray-200 bg-white text-gray-500 hover:bg-gray-50"
+          open
+            ? "border-indigo-300 bg-indigo-50 text-indigo-700"
+            : "border-gray-200 bg-white text-gray-500 hover:bg-gray-50"
         }`}
       >
         {current.icon}
@@ -112,14 +134,21 @@ function DensitySelector({ value, onChange }: DensityProps) {
           {DENSITY_OPTIONS.map((opt) => (
             <button
               key={opt.value}
-              onClick={() => { onChange(opt.value); setOpen(false); }}
+              onClick={() => {
+                onChange(opt.value);
+                setOpen(false);
+              }}
               className={`flex w-full items-center gap-2.5 px-3 py-2 text-xs transition-colors hover:bg-gray-50 ${
-                value === opt.value ? "font-semibold text-indigo-600" : "text-gray-700"
+                value === opt.value
+                  ? "font-semibold text-indigo-600"
+                  : "text-gray-700"
               }`}
             >
               <span className="text-sm">{opt.icon}</span>
               {opt.label}
-              {value === opt.value && <CheckOutlined className="ml-auto text-xs text-indigo-600" />}
+              {value === opt.value && (
+                <CheckOutlined className="ml-auto text-xs text-indigo-600" />
+              )}
             </button>
           ))}
         </div>
@@ -149,11 +178,20 @@ interface ToolbarProps<T> {
 }
 
 export function Toolbar<T>({
-  searchInput, onSearch, placeholder = "Search…",
-  activeFilterCount, onToggleFilters, isFilterPanelOpen,
-  columns, columnVisibility, onColumnChange, onToggleAllColumns,
-  density, onDensityChange,
-  onExport, onRefresh,
+  searchInput,
+  onSearch,
+  placeholder = "Search…",
+  activeFilterCount,
+  onToggleFilters,
+  isFilterPanelOpen,
+  columns,
+  columnVisibility,
+  onColumnChange,
+  onToggleAllColumns,
+  density,
+  onDensityChange,
+  onExport,
+  onRefresh,
   toolbarActions = [],
   canExport = true,
 }: ToolbarProps<T>) {
@@ -172,7 +210,10 @@ export function Toolbar<T>({
           className="h-9 w-full rounded-lg border border-gray-200 bg-white pl-9 pr-3 text-sm text-gray-700 placeholder-gray-400 outline-none transition focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/30"
         />
         {searchInput && (
-          <button onClick={() => onSearch("")} className="absolute inset-y-0 right-2 flex items-center text-gray-400 hover:text-gray-600">
+          <button
+            onClick={() => onSearch("")}
+            className="absolute inset-y-0 right-2 flex items-center text-gray-400 hover:text-gray-600"
+          >
             <CloseOutlined className="text-xs" />
           </button>
         )}
@@ -197,7 +238,12 @@ export function Toolbar<T>({
       </button>
 
       {/* Columns */}
-      <ColumnManager columns={columns} visibility={columnVisibility} onChange={onColumnChange} onToggleAll={onToggleAllColumns} />
+      <ColumnManager
+        columns={columns}
+        visibility={columnVisibility}
+        onChange={onColumnChange}
+        onToggleAll={onToggleAllColumns}
+      />
 
       {/* Density */}
       <DensitySelector value={density} onChange={onDensityChange} />
@@ -206,13 +252,20 @@ export function Toolbar<T>({
       <div className="h-6 w-px bg-gray-200" />
 
       {/* Refresh */}
-      <button onClick={onRefresh} title="Refresh" className="flex items-center justify-center rounded-lg border border-gray-200 bg-white p-1.5 text-gray-500 transition hover:bg-gray-50 hover:text-gray-700">
+      <button
+        onClick={onRefresh}
+        title="Refresh"
+        className="flex items-center justify-center rounded-lg border border-gray-200 bg-white p-1.5 text-gray-500 transition hover:bg-gray-50 hover:text-gray-700"
+      >
         <ReloadOutlined className="text-sm" />
       </button>
 
       {/* Export */}
       {canExport && (
-        <button onClick={onExport} className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition hover:bg-gray-50">
+        <button
+          onClick={onExport}
+          className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition hover:bg-gray-50"
+        >
           <DownloadOutlined />
           Export
         </button>
@@ -227,11 +280,16 @@ export function Toolbar<T>({
             action.variant === "primary"
               ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm"
               : action.variant === "danger"
-              ? "border border-red-200 bg-white text-red-600 hover:bg-red-50"
-              : "border border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                ? "border border-red-200 bg-white text-red-600 hover:bg-red-50"
+                : "border border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
           }`}
         >
-          {action.icon ?? (action.variant === "primary" ? <PlusOutlined /> : <WarningOutlined />)}
+          {action.icon ??
+            (action.variant === "primary" ? (
+              <PlusOutlined />
+            ) : (
+              <WarningOutlined />
+            ))}
           {action.label}
         </button>
       ))}

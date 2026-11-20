@@ -12,8 +12,9 @@ export const useLayoutStore = create<LayoutState>()(
     (set) => ({
       sidebarCollapsed: false,
       setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
-      toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
+      toggleSidebar: () =>
+        set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
     }),
-    { name: "trail-layout" }
-  )
+    { name: "trail-layout" },
+  ),
 );

@@ -1,8 +1,4 @@
-import type {
-  ColumnDef,
-  Table,
-  Row,
-} from "@tanstack/react-table";
+import type { ColumnDef, Table, Row } from "@tanstack/react-table";
 import type { ReactNode } from "react";
 
 export type DensityMode = "compact" | "comfortable";

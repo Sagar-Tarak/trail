@@ -6,7 +6,7 @@ import type { CSSProperties } from "react";
  * left/right offset values are applied correctly.
  */
 export function getPinnedStyle<TData>(
-  column: Column<TData, unknown>
+  column: Column<TData, unknown>,
 ): CSSProperties {
   const isPinnedLeft = column.getIsPinned() === "left";
   const isPinnedRight = column.getIsPinned() === "right";

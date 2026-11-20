@@ -23,7 +23,9 @@ export function ActivityTrendChart({ data }: Props) {
       subtitle="Events per day — this week"
       height={160}
       rangeTabs={RANGE_TABS}
-      valueFormatter={(v) => (v >= 1000 ? `${(v / 1000).toFixed(1)}k` : String(v))}
+      valueFormatter={(v) =>
+        v >= 1000 ? `${(v / 1000).toFixed(1)}k` : String(v)
+      }
     />
   );
 }

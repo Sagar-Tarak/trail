@@ -10,7 +10,13 @@ interface SavedViewsProps {
   onSave: (name: string) => void;
 }
 
-export function SavedViews({ views, activeViewId, onLoad, onDelete, onSave }: SavedViewsProps) {
+export function SavedViews({
+  views,
+  activeViewId,
+  onLoad,
+  onDelete,
+  onSave,
+}: SavedViewsProps) {
   const [saving, setSaving] = useState(false);
   const [name, setName] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -68,7 +74,10 @@ export function SavedViews({ views, activeViewId, onLoad, onDelete, onSave }: Sa
         >
           {view.name}
           <button
-            onClick={(e) => { e.stopPropagation(); onDelete(view.id); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(view.id);
+            }}
             className="ml-0.5 hidden h-4 w-4 items-center justify-center rounded text-gray-400 hover:bg-gray-200 hover:text-gray-600 group-hover:flex transition-colors"
           >
             <CloseOutlined style={{ fontSize: 9 }} />
@@ -79,7 +88,10 @@ export function SavedViews({ views, activeViewId, onLoad, onDelete, onSave }: Sa
       {/* Save input */}
       {saving ? (
         <form
-          onSubmit={(e) => { e.preventDefault(); handleSave(); }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSave();
+          }}
           className="flex items-center gap-1"
         >
           <input
@@ -97,7 +109,10 @@ export function SavedViews({ views, activeViewId, onLoad, onDelete, onSave }: Sa
           </button>
           <button
             type="button"
-            onClick={() => { setSaving(false); setName(""); }}
+            onClick={() => {
+              setSaving(false);
+              setName("");
+            }}
             className="text-[10px] text-gray-400 hover:text-gray-600"
           >
             Cancel

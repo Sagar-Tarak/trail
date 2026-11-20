@@ -6,7 +6,7 @@ interface Props {
 }
 
 const SERIES = [
-  { key: "count",  label: "Events", color: "#6366f1" },
+  { key: "count", label: "Events", color: "#6366f1" },
   { key: "errors", label: "Errors", color: "#f43f5e" },
 ];
 

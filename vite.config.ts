@@ -17,5 +17,11 @@ export default defineConfig({
   server: {
     port: 5199,
     strictPort: true,
+    proxy: {
+      "/trio-trail/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+      },
+    },
   },
 });

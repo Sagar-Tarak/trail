@@ -1,8 +1,13 @@
 import { useState, useMemo, type ReactNode } from "react";
 import {
-  CaretUpOutlined, CaretDownOutlined, SearchOutlined,
-  FileTextOutlined, DoubleLeftOutlined, DoubleRightOutlined,
-  LeftOutlined, RightOutlined,
+  CaretUpOutlined,
+  CaretDownOutlined,
+  SearchOutlined,
+  FileTextOutlined,
+  DoubleLeftOutlined,
+  DoubleRightOutlined,
+  LeftOutlined,
+  RightOutlined,
 } from "@ant-design/icons";
 
 export type SortDir = "asc" | "desc" | null;
@@ -47,9 +52,7 @@ interface DataTableProps<T> {
 }
 
 function getKey<T>(record: T, rowKey: DataTableProps<T>["rowKey"]): string {
-  return typeof rowKey === "function"
-    ? rowKey(record)
-    : String(record[rowKey]);
+  return typeof rowKey === "function" ? rowKey(record) : String(record[rowKey]);
 }
 
 function getValue<T>(record: T, col: TableColumn<T>): unknown {
@@ -57,7 +60,11 @@ function getValue<T>(record: T, col: TableColumn<T>): unknown {
   return record[field];
 }
 
-function searchRecord<T>(record: T, columns: TableColumn<T>[], query: string): boolean {
+function searchRecord<T>(
+  record: T,
+  columns: TableColumn<T>[],
+  query: string,
+): boolean {
   const q = query.toLowerCase();
   for (const col of columns) {
     if (!col.searchable) continue;
@@ -69,9 +76,16 @@ function searchRecord<T>(record: T, columns: TableColumn<T>[], query: string): b
 
 function SortIcon({ dir }: { dir: SortDir }) {
   return (
-    <span className="ml-1 inline-flex flex-col" style={{ fontSize: 8, lineHeight: 1, gap: 1 }}>
-      <CaretUpOutlined style={{ color: dir === "asc" ? "#4f46e5" : "#d1d5db" }} />
-      <CaretDownOutlined style={{ color: dir === "desc" ? "#4f46e5" : "#d1d5db" }} />
+    <span
+      className="ml-1 inline-flex flex-col"
+      style={{ fontSize: 8, lineHeight: 1, gap: 1 }}
+    >
+      <CaretUpOutlined
+        style={{ color: dir === "asc" ? "#4f46e5" : "#d1d5db" }}
+      />
+      <CaretDownOutlined
+        style={{ color: dir === "desc" ? "#4f46e5" : "#d1d5db" }}
+      />
     </span>
   );
 }
@@ -96,7 +110,10 @@ function SkeletonRows({ columns, rows }: { columns: number; rows: number }) {
         <tr key={ri} className="border-b border-gray-50">
           {Array.from({ length: columns }).map((_, ci) => (
             <td key={ci} className="px-4 py-3">
-              <div className="h-4 animate-pulse rounded bg-gray-100" style={{ width: `${50 + Math.random() * 40}%` }} />
+              <div
+                className="h-4 animate-pulse rounded bg-gray-100"
+                style={{ width: `${50 + Math.random() * 40}%` }}
+              />
             </td>
           ))}
         </tr>
@@ -154,9 +171,17 @@ export function DataTable<T>({
     if (sortKey && sortDir) {
       const col = columns.find((c) => c.key === sortKey);
       rows.sort((a, b) => {
-        const av = col ? getValue(a, col) : (a as Record<string, unknown>)[sortKey];
-        const bv = col ? getValue(b, col) : (b as Record<string, unknown>)[sortKey];
-        const cmp = String(av ?? "").localeCompare(String(bv ?? ""), undefined, { numeric: true });
+        const av = col
+          ? getValue(a, col)
+          : (a as Record<string, unknown>)[sortKey];
+        const bv = col
+          ? getValue(b, col)
+          : (b as Record<string, unknown>)[sortKey];
+        const cmp = String(av ?? "").localeCompare(
+          String(bv ?? ""),
+          undefined,
+          { numeric: true },
+        );
         return sortDir === "asc" ? cmp : -cmp;
       });
     }
@@ -166,7 +191,10 @@ export function DataTable<T>({
 
   const totalPages = Math.max(1, Math.ceil(processed.length / pageSize));
   const safePage = Math.min(page, totalPages);
-  const pageData = processed.slice((safePage - 1) * pageSize, safePage * pageSize);
+  const pageData = processed.slice(
+    (safePage - 1) * pageSize,
+    safePage * pageSize,
+  );
 
   const alignClass = (a?: string) =>
     a === "center" ? "text-center" : a === "right" ? "text-right" : "text-left";
@@ -179,8 +207,14 @@ export function DataTable<T>({
           <div className="flex items-center gap-4 min-w-0">
             {(title || subtitle) && (
               <div>
-                {title && <h3 className="text-sm font-semibold text-gray-800">{title}</h3>}
-                {subtitle && <p className="mt-0.5 text-xs text-gray-400">{subtitle}</p>}
+                {title && (
+                  <h3 className="text-sm font-semibold text-gray-800">
+                    {title}
+                  </h3>
+                )}
+                {subtitle && (
+                  <p className="mt-0.5 text-xs text-gray-400">{subtitle}</p>
+                )}
               </div>
             )}
             {searchable && (
@@ -192,13 +226,18 @@ export function DataTable<T>({
                   type="text"
                   placeholder={searchPlaceholder}
                   value={query}
-                  onChange={(e) => { setQuery(e.target.value); setPage(1); }}
+                  onChange={(e) => {
+                    setQuery(e.target.value);
+                    setPage(1);
+                  }}
                   className="h-8 w-52 rounded-lg border border-gray-200 bg-gray-50 pl-8 pr-3 text-xs text-gray-700 placeholder-gray-400 outline-none focus:border-indigo-400 focus:bg-white transition"
                 />
               </div>
             )}
           </div>
-          {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
+          {actions && (
+            <div className="flex shrink-0 items-center gap-2">{actions}</div>
+          )}
         </div>
       )}
 
@@ -242,7 +281,9 @@ export function DataTable<T>({
                 >
                   {columns.map((col) => {
                     const raw = getValue(record, col);
-                    const cell = col.render ? col.render(raw, record, ri) : String(raw ?? "—");
+                    const cell = col.render
+                      ? col.render(raw, record, ri)
+                      : String(raw ?? "—");
                     return (
                       <td
                         key={col.key}
@@ -265,32 +306,50 @@ export function DataTable<T>({
         <div className="flex items-center justify-between gap-4 border-t border-gray-100 px-5 py-3">
           <div className="flex items-center gap-2 text-xs text-gray-500">
             <span>
-              {(safePage - 1) * pageSize + 1}–{Math.min(safePage * pageSize, processed.length)} of{" "}
-              <span className="font-medium text-gray-700">{processed.length}</span>
+              {(safePage - 1) * pageSize + 1}–
+              {Math.min(safePage * pageSize, processed.length)} of{" "}
+              <span className="font-medium text-gray-700">
+                {processed.length}
+              </span>
             </span>
             <select
               value={pageSize}
-              onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+                setPage(1);
+              }}
               className="ml-1 h-7 rounded-md border border-gray-200 bg-white px-1.5 text-xs text-gray-600 outline-none focus:border-indigo-400"
             >
               {pageSizeOptions.map((n) => (
-                <option key={n} value={n}>{n} / page</option>
+                <option key={n} value={n}>
+                  {n} / page
+                </option>
               ))}
             </select>
           </div>
 
           <div className="flex items-center gap-1">
-            <PaginationBtn onClick={() => setPage(1)} disabled={safePage === 1} title="First">
+            <PaginationBtn
+              onClick={() => setPage(1)}
+              disabled={safePage === 1}
+              title="First"
+            >
               <DoubleLeftOutlined />
             </PaginationBtn>
-            <PaginationBtn onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={safePage === 1} title="Previous">
+            <PaginationBtn
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={safePage === 1}
+              title="Previous"
+            >
               <LeftOutlined />
             </PaginationBtn>
 
             {/* Page pills */}
             {getPillRange(safePage, totalPages).map((p, i) =>
               p === "…" ? (
-                <span key={`e${i}`} className="px-1 text-xs text-gray-400">…</span>
+                <span key={`e${i}`} className="px-1 text-xs text-gray-400">
+                  …
+                </span>
               ) : (
                 <PaginationBtn
                   key={p}
@@ -299,13 +358,21 @@ export function DataTable<T>({
                 >
                   {p}
                 </PaginationBtn>
-              )
+              ),
             )}
 
-            <PaginationBtn onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={safePage === totalPages} title="Next">
+            <PaginationBtn
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={safePage === totalPages}
+              title="Next"
+            >
               <RightOutlined />
             </PaginationBtn>
-            <PaginationBtn onClick={() => setPage(totalPages)} disabled={safePage === totalPages} title="Last">
+            <PaginationBtn
+              onClick={() => setPage(totalPages)}
+              disabled={safePage === totalPages}
+              title="Last"
+            >
               <DoubleRightOutlined />
             </PaginationBtn>
           </div>
@@ -317,7 +384,9 @@ export function DataTable<T>({
   if (bare) return <div className={className}>{inner}</div>;
 
   return (
-    <div className={`overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm ${className}`}>
+    <div
+      className={`overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm ${className}`}
+    >
       {inner}
     </div>
   );
@@ -327,7 +396,12 @@ function getPillRange(current: number, total: number): (number | "…")[] {
   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
   const pages: (number | "…")[] = [1];
   if (current > 3) pages.push("…");
-  for (let p = Math.max(2, current - 1); p <= Math.min(total - 1, current + 1); p++) pages.push(p);
+  for (
+    let p = Math.max(2, current - 1);
+    p <= Math.min(total - 1, current + 1);
+    p++
+  )
+    pages.push(p);
   if (current < total - 2) pages.push("…");
   pages.push(total);
   return pages;
@@ -356,8 +430,8 @@ function PaginationBtn({
         active
           ? "bg-indigo-600 text-white shadow-sm"
           : disabled
-          ? "cursor-not-allowed text-gray-300"
-          : "text-gray-600 hover:bg-gray-100",
+            ? "cursor-not-allowed text-gray-300"
+            : "text-gray-600 hover:bg-gray-100",
       ].join(" ")}
     >
       {children}

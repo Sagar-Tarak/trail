@@ -7,7 +7,12 @@ interface BulkActionBarProps<T> {
   onClear: () => void;
 }
 
-export function BulkActionBar<T>({ count, actions, selected, onClear }: BulkActionBarProps<T>) {
+export function BulkActionBar<T>({
+  count,
+  actions,
+  selected,
+  onClear,
+}: BulkActionBarProps<T>) {
   if (count === 0) return null;
 
   const visibleActions = actions.filter((a) => !a.show || a.show(selected));

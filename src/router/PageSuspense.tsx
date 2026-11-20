@@ -1,10 +1,18 @@
-import React from "react";
+import { Suspense, type ReactNode } from "react";
 
-/** Thin wrapper — renders a blank bg while the lazy chunk loads. */
-export function PageSuspense({ children }: { children: React.ReactNode }) {
+export function PageSuspense({ children }: { children: ReactNode }) {
   return (
-    <React.Suspense fallback={<div className="flex-1 bg-gray-50" />}>
+    <Suspense
+      fallback={
+        <div role="status" className="w-full animate-pulse space-y-5 p-6">
+          <span className="sr-only">Loading page…</span>
+          <div className="h-7 w-48 rounded-lg bg-slate-200" />
+          <div className="h-4 w-64 max-w-full rounded bg-slate-100" />
+          <div className="h-48 rounded-xl border border-slate-100 bg-white" />
+        </div>
+      }
+    >
       {children}
-    </React.Suspense>
+    </Suspense>
   );
 }

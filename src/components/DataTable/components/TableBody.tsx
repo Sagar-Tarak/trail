@@ -1,4 +1,4 @@
-import { memo, useRef, type ReactElement } from "react";
+import { memo, type ReactElement } from "react";
 import { flexRender } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import type { DataTableContext } from "../types/data-table.types";
@@ -54,8 +54,8 @@ export const TableBody = memo(function TableBody<TData>({
           isSelected
             ? "bg-[#EEF2FF]"
             : zebraRows && isEven
-            ? "bg-gray-50/60 hover:bg-[#F5F7FA]"
-            : "bg-white hover:bg-[#F5F7FA]",
+              ? "bg-gray-50/60 hover:bg-[#F5F7FA]"
+              : "bg-white hover:bg-[#F5F7FA]",
           onRowClick ? "cursor-pointer" : "",
         ]
           .filter(Boolean)

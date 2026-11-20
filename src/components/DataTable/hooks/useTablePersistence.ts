@@ -2,8 +2,12 @@ import { useEffect } from "react";
 import type { Table } from "@tanstack/react-table";
 import { useTableStore } from "../../../store/useTableStore";
 
-export function useTablePersistence<TData>(table: Table<TData>, tableId: string) {
-  const { setColumnVisibility, setColumnPinning, setPageSize } = useTableStore();
+export function useTablePersistence<TData>(
+  table: Table<TData>,
+  tableId: string,
+) {
+  const { setColumnVisibility, setColumnPinning, setPageSize } =
+    useTableStore();
 
   const columnVisibility = table.getState().columnVisibility;
   const columnPinning = table.getState().columnPinning;

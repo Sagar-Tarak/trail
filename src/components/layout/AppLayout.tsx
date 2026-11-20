@@ -14,7 +14,12 @@ import type { NavItem } from "./types";
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/", icon: <DashboardIcon /> },
-  { label: "Activities", href: "/activities", icon: <ActivityIcon />, badge: 12 },
+  {
+    label: "Activities",
+    href: "/activities",
+    icon: <ActivityIcon />,
+    badge: 12,
+  },
   { label: "Users", href: "/users", icon: <UsersIcon /> },
   { label: "Records", href: "/records", icon: <ReportsIcon /> },
   { label: "Errors", href: "/errors", icon: <AnalyticsIcon /> },
@@ -24,18 +29,29 @@ const NAV_ITEMS: NavItem[] = [
 interface AppLayoutProps {
   children: ReactNode;
   title?: string;
-  onNavigate?: (href: string) => void;
 }
 
-export function AppLayout({ children, title, onNavigate }: AppLayoutProps) {
-  const { sidebarCollapsed: collapsed, setSidebarCollapsed, toggleSidebar } = useLayoutStore();
+export function AppLayout({ children, title }: AppLayoutProps) {
+  const {
+    sidebarCollapsed: collapsed,
+    setSidebarCollapsed,
+    toggleSidebar,
+  } = useLayoutStore();
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
-      <Sidebar items={NAV_ITEMS} collapsed={collapsed} onCollapse={setSidebarCollapsed} onNavigate={onNavigate} />
+      <Sidebar
+        items={NAV_ITEMS}
+        collapsed={collapsed}
+        onCollapse={setSidebarCollapsed}
+      />
 
       <div className="flex flex-1 flex-col overflow-hidden">
-        <Navbar title={title} onMenuToggle={toggleSidebar} sidebarCollapsed={collapsed} />
+        <Navbar
+          title={title}
+          onMenuToggle={toggleSidebar}
+          sidebarCollapsed={collapsed}
+        />
 
         {/* max-w-[1600px] keeps content readable on wide monitors while allowing tables more horizontal breathing room */}
         <main className="flex-1 overflow-y-auto p-6">

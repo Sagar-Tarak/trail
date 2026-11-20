@@ -1,6 +1,16 @@
-import type { RowAction, ToolbarAction, BulkAction } from "@/layouts/MasterTablePage";
+import type {
+  RowAction,
+  ToolbarAction,
+  BulkAction,
+} from "@/layouts/MasterTablePage";
 import type { Activity } from "./activity.types";
-import { CopyOutlined, FlagOutlined, DeleteOutlined, FileTextOutlined, DownloadOutlined } from "@ant-design/icons";
+import {
+  CopyOutlined,
+  FlagOutlined,
+  DeleteOutlined,
+  FileTextOutlined,
+  DownloadOutlined,
+} from "@ant-design/icons";
 
 export const activityRowActions: RowAction<Activity>[] = [
   {

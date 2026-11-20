@@ -12,7 +12,8 @@ interface Props {
 export function SidebarItem({ item, collapsed, depth = 0 }: Props) {
   const { pathname } = useLocation();
   const hasChildren = !!item.children?.length;
-  const isChildActive = item.children?.some((c) => c.href === pathname) ?? false;
+  const isChildActive =
+    item.children?.some((c) => c.href === pathname) ?? false;
   const [open, setOpen] = useState(isChildActive && hasChildren);
 
   const baseClasses = `
@@ -27,18 +28,24 @@ export function SidebarItem({ item, collapsed, depth = 0 }: Props) {
         <button
           onClick={() => setOpen((p) => !p)}
           className={`${baseClasses} cursor-pointer ${
-            isChildActive ? "bg-indigo-600 text-white shadow-sm" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+            isChildActive
+              ? "bg-indigo-600 text-white shadow-sm"
+              : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
           }`}
         >
           {item.icon && (
-            <span className={`shrink-0 ${isChildActive ? "text-white" : "text-gray-400 group-hover:text-gray-600"}`}>
+            <span
+              className={`shrink-0 ${isChildActive ? "text-white" : "text-gray-400 group-hover:text-gray-600"}`}
+            >
               {item.icon}
             </span>
           )}
           {!collapsed && (
             <>
               <span className="flex-1 truncate text-left">{item.label}</span>
-              <DownOutlined className={`text-xs text-gray-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+              <DownOutlined
+                className={`text-xs text-gray-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+              />
             </>
           )}
         </button>
@@ -46,7 +53,12 @@ export function SidebarItem({ item, collapsed, depth = 0 }: Props) {
         {!collapsed && open && (
           <ul className="mt-0.5 space-y-0.5 border-l border-gray-200 ml-5">
             {item.children!.map((child) => (
-              <SidebarItem key={child.href} item={child} collapsed={collapsed} depth={depth + 1} />
+              <SidebarItem
+                key={child.href}
+                item={child}
+                collapsed={collapsed}
+                depth={depth + 1}
+              />
             ))}
           </ul>
         )}
@@ -71,7 +83,9 @@ export function SidebarItem({ item, collapsed, depth = 0 }: Props) {
         {({ isActive }) => (
           <>
             {item.icon && (
-              <span className={`shrink-0 ${isActive ? "text-white" : "text-gray-400 group-hover:text-gray-600"}`}>
+              <span
+                className={`shrink-0 ${isActive ? "text-white" : "text-gray-400 group-hover:text-gray-600"}`}
+              >
                 {item.icon}
               </span>
             )}
@@ -80,9 +94,13 @@ export function SidebarItem({ item, collapsed, depth = 0 }: Props) {
               <>
                 <span className="flex-1 truncate text-left">{item.label}</span>
                 {item.badge != null && (
-                  <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold leading-none ${
-                    isActive ? "bg-white/20 text-white" : "bg-indigo-100 text-indigo-700"
-                  }`}>
+                  <span
+                    className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold leading-none ${
+                      isActive
+                        ? "bg-white/20 text-white"
+                        : "bg-indigo-100 text-indigo-700"
+                    }`}
+                  >
                     {item.badge}
                   </span>
                 )}

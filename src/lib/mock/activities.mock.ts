@@ -1,6 +1,10 @@
 import type { ApiQueryParams } from "@/lib/api/types";
 import { delay, parseParams, sortItems, paginate } from "./mockUtils";
-import type { Activity, ActivityStatus, ActivitySeverity } from "@/features/activities/activity.types";
+import type {
+  Activity,
+  ActivityStatus,
+  ActivitySeverity,
+} from "@/features/activities/activity.types";
 
 const USERS = [
   { name: "Priya Mehta", email: "priya@corp.com" },
@@ -21,15 +25,52 @@ const USERS = [
   { name: "Divya Krishnan", email: "divya@corp.com" },
 ];
 
-const MODULES = ["Finance", "HRMS", "CRM", "TMS", "Inventory", "Payroll", "Compliance"];
-const STATUSES: ActivityStatus[] = ["success", "success", "success", "info", "warning", "error"];
-const SEVERITIES: ActivitySeverity[] = ["low", "low", "medium", "medium", "high", "critical"];
+const MODULES = [
+  "Finance",
+  "HRMS",
+  "CRM",
+  "TMS",
+  "Inventory",
+  "Payroll",
+  "Compliance",
+];
+const STATUSES: ActivityStatus[] = [
+  "success",
+  "success",
+  "success",
+  "info",
+  "warning",
+  "error",
+];
+const SEVERITIES: ActivitySeverity[] = [
+  "low",
+  "low",
+  "medium",
+  "medium",
+  "high",
+  "critical",
+];
 const ACTIONS = [
-  "User login", "User logout", "Record created", "Record updated", "Record deleted",
-  "Report exported", "Bulk import", "Permission changed", "Password reset",
-  "Invoice approved", "Payment processed", "Stock adjusted", "Route optimised",
-  "Config changed", "Role assigned", "Data archived", "API key generated",
-  "Audit log accessed", "Backup initiated", "Alert acknowledged",
+  "User login",
+  "User logout",
+  "Record created",
+  "Record updated",
+  "Record deleted",
+  "Report exported",
+  "Bulk import",
+  "Permission changed",
+  "Password reset",
+  "Invoice approved",
+  "Payment processed",
+  "Stock adjusted",
+  "Route optimised",
+  "Config changed",
+  "Role assigned",
+  "Data archived",
+  "API key generated",
+  "Audit log accessed",
+  "Backup initiated",
+  "Alert acknowledged",
 ];
 
 const TOTAL_RECORDS = 10_000;
@@ -50,8 +91,9 @@ function generateActivities(count: number): Activity[] {
       status: STATUSES[i % STATUSES.length],
       severity: SEVERITIES[(i * 3) % SEVERITIES.length],
       ipAddress: `10.${(i % 5) + 1}.${(i % 10) + 1}.${(i % 50) + 10}`,
-      duration: 50 + (i * 37) % 5000,
-      recordId: i % 4 === 0 ? `REC-${String(i * 7).padStart(6, "0")}` : undefined,
+      duration: 50 + ((i * 37) % 5000),
+      recordId:
+        i % 4 === 0 ? `REC-${String(i * 7).padStart(6, "0")}` : undefined,
     };
   });
 }
@@ -61,12 +103,13 @@ const DB: Activity[] = generateActivities(TOTAL_RECORDS);
 
 export async function fetchActivitiesFromServer(
   params: ApiQueryParams,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ) {
   // tweak this if loading states feel too fast/slow in dev
   await delay(80, signal);
 
-  const { search, sortKey, sortDir, page, pageSize, filters } = parseParams(params);
+  const { search, sortKey, sortDir, page, pageSize, filters } =
+    parseParams(params);
 
   let items = DB;
 
@@ -78,7 +121,7 @@ export async function fetchActivitiesFromServer(
         a.action.toLowerCase().includes(q) ||
         a.module.toLowerCase().includes(q) ||
         a.email.toLowerCase().includes(q) ||
-        a.id.toLowerCase().includes(q)
+        a.id.toLowerCase().includes(q),
     );
   }
 
@@ -86,15 +129,20 @@ export async function fetchActivitiesFromServer(
     items = items.filter((a) => a.module === filters.module);
   }
   if (Array.isArray(filters.status) && filters.status.length > 0) {
-    items = items.filter((a) => (filters.status as string[]).includes(a.status));
+    items = items.filter((a) =>
+      (filters.status as string[]).includes(a.status),
+    );
   }
   if (Array.isArray(filters.severity) && filters.severity.length > 0) {
-    items = items.filter((a) => (filters.severity as string[]).includes(a.severity));
+    items = items.filter((a) =>
+      (filters.severity as string[]).includes(a.severity),
+    );
   }
   if (filters.user) {
     const q = String(filters.user).toLowerCase();
     items = items.filter(
-      (a) => a.user.toLowerCase().includes(q) || a.email.toLowerCase().includes(q)
+      (a) =>
+        a.user.toLowerCase().includes(q) || a.email.toLowerCase().includes(q),
     );
   }
   if (filters.dateRange && typeof filters.dateRange === "object") {

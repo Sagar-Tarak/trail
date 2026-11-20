@@ -31,9 +31,15 @@ export const userColumns: ColumnDef<User>[] = [
       <div className="flex items-center gap-2.5">
         <div className="relative">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-[11px] font-bold text-indigo-700">
-            {u.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+            {u.name
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .slice(0, 2)}
           </div>
-          <span className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white ${STATUS_DOT[u.status]}`} />
+          <span
+            className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white ${STATUS_DOT[u.status]}`}
+          />
         </div>
         <div>
           <p className="text-xs font-semibold text-gray-800">{u.name}</p>
@@ -49,7 +55,9 @@ export const userColumns: ColumnDef<User>[] = [
     sortable: true,
     defaultVisible: true,
     render: (v) => (
-      <span className={`rounded-md px-2 py-0.5 text-[11px] font-semibold capitalize ${ROLE_STYLES[v as UserRole]}`}>
+      <span
+        className={`rounded-md px-2 py-0.5 text-[11px] font-semibold capitalize ${ROLE_STYLES[v as UserRole]}`}
+      >
         {String(v)}
       </span>
     ),
@@ -75,7 +83,9 @@ export const userColumns: ColumnDef<User>[] = [
     render: (v) => {
       const s = v as UserStatus;
       return (
-        <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold capitalize ${STATUS_STYLES[s]}`}>
+        <span
+          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold capitalize ${STATUS_STYLES[s]}`}
+        >
           <span className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT[s]}`} />
           {s}
         </span>

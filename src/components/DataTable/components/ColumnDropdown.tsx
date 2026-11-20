@@ -14,7 +14,9 @@ export function ColumnDropdown<TData>({ table }: ColumnDropdownProps<TData>) {
 
   const columns = table
     .getAllLeafColumns()
-    .filter((c) => !(c.columnDef.meta as DataTableColumnMeta | undefined)?.system);
+    .filter(
+      (c) => !(c.columnDef.meta as DataTableColumnMeta | undefined)?.system,
+    );
 
   const handleReset = useCallback(() => {
     table.resetColumnVisibility();
@@ -29,8 +31,20 @@ export function ColumnDropdown<TData>({ table }: ColumnDropdownProps<TData>) {
         aria-expanded={open}
         className="dt-toolbar-btn"
       >
-        <svg className="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 4.5v15m6-15v15M3 9h18M3 15h18" />
+        <svg
+          className="h-3.5 w-3.5"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.8}
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M9 4.5v15m6-15v15M3 9h18M3 15h18"
+          />
         </svg>
         Columns
       </button>
@@ -51,7 +65,9 @@ export function ColumnDropdown<TData>({ table }: ColumnDropdownProps<TData>) {
 
           <div className="border-t border-[#E8EAED] pt-1">
             {columns.map((col) => {
-              const meta = col.columnDef.meta as DataTableColumnMeta | undefined;
+              const meta = col.columnDef.meta as
+                | DataTableColumnMeta
+                | undefined;
               const label = meta?.label ?? col.id;
               const isPinnedLeft = col.getIsPinned() === "left";
               const isPinnedRight = col.getIsPinned() === "right";
@@ -79,9 +95,7 @@ export function ColumnDropdown<TData>({ table }: ColumnDropdownProps<TData>) {
                   {/* Pin controls */}
                   <div className="flex gap-0.5">
                     <button
-                      onClick={() =>
-                        col.pin(isPinnedLeft ? false : "left")
-                      }
+                      onClick={() => col.pin(isPinnedLeft ? false : "left")}
                       title="Pin left"
                       aria-label={`${isPinnedLeft ? "Unpin" : "Pin"} ${label} to left`}
                       className={`flex h-5 w-5 items-center justify-center rounded text-[10px] transition-colors ${
@@ -93,9 +107,7 @@ export function ColumnDropdown<TData>({ table }: ColumnDropdownProps<TData>) {
                       L
                     </button>
                     <button
-                      onClick={() =>
-                        col.pin(isPinnedRight ? false : "right")
-                      }
+                      onClick={() => col.pin(isPinnedRight ? false : "right")}
                       title="Pin right"
                       aria-label={`${isPinnedRight ? "Unpin" : "Pin"} ${label} to right`}
                       className={`flex h-5 w-5 items-center justify-center rounded text-[10px] transition-colors ${

@@ -60,11 +60,18 @@ export function parseParams(p: ApiQueryParams): ParsedFilters {
 }
 
 // locale-aware sort so "10" comes after "9" instead of between "1" and "2"
-export function sortItems<T>(items: T[], sortKey: string, sortDir: "asc" | "desc"): T[] {
+export function sortItems<T>(
+  items: T[],
+  sortKey: string,
+  sortDir: "asc" | "desc",
+): T[] {
   return [...items].sort((a, b) => {
     const av = (a as Record<string, unknown>)[sortKey];
     const bv = (b as Record<string, unknown>)[sortKey];
-    const cmp = String(av ?? "").localeCompare(String(bv ?? ""), undefined, { numeric: true, sensitivity: "base" });
+    const cmp = String(av ?? "").localeCompare(String(bv ?? ""), undefined, {
+      numeric: true,
+      sensitivity: "base",
+    });
     return sortDir === "asc" ? cmp : -cmp;
   });
 }
@@ -73,7 +80,7 @@ export function paginate<T extends object>(
   items: T[],
   page: number,
   pageSize: number,
-  rowKey: keyof T | ((r: T) => string)
+  rowKey: keyof T | ((r: T) => string),
 ): ApiPage<T> {
   const total = items.length;
   const start = (page - 1) * pageSize;
@@ -89,9 +96,10 @@ export function paginate<T extends object>(
       : String(lastItem[rowKey])
     : null;
 
-  const nextCursor = hasMore && lastId
-    ? btoa(JSON.stringify({ id: lastId, page: page + 1 }))
-    : null;
+  const nextCursor =
+    hasMore && lastId
+      ? btoa(JSON.stringify({ id: lastId, page: page + 1 }))
+      : null;
 
   return { items: slice, total, page, pageSize, hasMore, nextCursor };
 }

@@ -31,7 +31,7 @@ export function SearchInput({
       clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(() => onChange(v), SEARCH_DEBOUNCE_MS);
     },
-    [onChange]
+    [onChange],
   );
 
   const handleClear = useCallback(() => {
@@ -105,7 +105,11 @@ export function SearchInput({
             className="h-2 w-2"
             aria-hidden="true"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 18 18 6M6 6l12 12"
+            />
           </svg>
         </button>
       )}

@@ -6,8 +6,8 @@ export const userFilters: FilterDef[] = [
     label: "Status",
     type: "multi-select",
     options: [
-      { label: "Active",    value: "active" },
-      { label: "Inactive",  value: "inactive" },
+      { label: "Active", value: "active" },
+      { label: "Inactive", value: "inactive" },
       { label: "Suspended", value: "suspended" },
     ],
   },
@@ -16,10 +16,10 @@ export const userFilters: FilterDef[] = [
     label: "Role",
     type: "multi-select",
     options: [
-      { label: "Admin",   value: "admin" },
+      { label: "Admin", value: "admin" },
       { label: "Manager", value: "manager" },
       { label: "Analyst", value: "analyst" },
-      { label: "Viewer",  value: "viewer" },
+      { label: "Viewer", value: "viewer" },
     ],
   },
   {
@@ -27,10 +27,10 @@ export const userFilters: FilterDef[] = [
     label: "Module",
     type: "select",
     options: [
-      { label: "Finance",   value: "Finance" },
-      { label: "HRMS",      value: "HRMS" },
-      { label: "CRM",       value: "CRM" },
-      { label: "TMS",       value: "TMS" },
+      { label: "Finance", value: "Finance" },
+      { label: "HRMS", value: "HRMS" },
+      { label: "CRM", value: "CRM" },
+      { label: "TMS", value: "TMS" },
       { label: "Inventory", value: "Inventory" },
     ],
   },

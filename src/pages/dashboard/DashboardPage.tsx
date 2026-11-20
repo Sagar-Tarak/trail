@@ -1,6 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import {
-  TeamOutlined, ThunderboltOutlined, WarningOutlined, CheckCircleOutlined, ReloadOutlined,
+  TeamOutlined,
+  ThunderboltOutlined,
+  WarningOutlined,
+  CheckCircleOutlined,
+  ReloadOutlined,
 } from "@ant-design/icons";
 import { fetchDashboardData } from "./api";
 import { StatCard } from "./components/StatCard";
@@ -61,7 +65,9 @@ export function DashboardPage() {
   if (isError) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-red-200 bg-red-50 py-16 text-center">
-        <p className="text-sm font-medium text-red-700">Failed to load dashboard data</p>
+        <p className="text-sm font-medium text-red-700">
+          Failed to load dashboard data
+        </p>
         <button
           onClick={() => refetch()}
           className="mt-3 rounded-lg bg-red-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-red-700"
@@ -72,7 +78,13 @@ export function DashboardPage() {
     );
   }
 
-  const { stats, moduleStats, statusDistribution, activityTrend, recentActivities } = data!;
+  const {
+    stats,
+    moduleStats,
+    statusDistribution,
+    activityTrend,
+    recentActivities,
+  } = data!;
 
   return (
     <PageShell

@@ -20,7 +20,7 @@ function toCSV<TData>(rows: Row<TData>[]): string {
       .getAllCells()
       .filter((c) => c.column.id !== "__selection__")
       .map((c) => escape(c.getValue()))
-      .join(",")
+      .join(","),
   );
 
   return [headers.join(","), ...csvRows].join("\n");
@@ -28,7 +28,10 @@ function toCSV<TData>(rows: Row<TData>[]): string {
 
 export function exportCsv<TData>(rows: Row<TData>[], filename = "export") {
   const content = toCSV(rows);
-  downloadBlob(new Blob([content], { type: "text/csv;charset=utf-8;" }), `${filename}.csv`);
+  downloadBlob(
+    new Blob([content], { type: "text/csv;charset=utf-8;" }),
+    `${filename}.csv`,
+  );
 }
 
 export function exportJson<TData>(rows: Row<TData>[], filename = "export") {
@@ -36,14 +39,14 @@ export function exportJson<TData>(rows: Row<TData>[], filename = "export") {
   const content = JSON.stringify(payload, null, 2);
   downloadBlob(
     new Blob([content], { type: "application/json" }),
-    `${filename}.json`
+    `${filename}.json`,
   );
 }
 
 // dynamic import keeps xlsx out of the main bundle (pnpm add xlsx)
 export async function exportExcel<TData>(
   rows: Row<TData>[],
-  filename = "export"
+  filename = "export",
 ) {
   // Dynamic import keeps xlsx out of the main bundle
   const XLSX = await import("xlsx");
@@ -53,8 +56,8 @@ export async function exportExcel<TData>(
       r
         .getAllCells()
         .filter((c) => c.column.id !== "__selection__")
-        .map((c) => [c.column.id, c.getValue()])
-    )
+        .map((c) => [c.column.id, c.getValue()]),
+    ),
   );
 
   const ws = XLSX.utils.json_to_sheet(wsData);
@@ -74,7 +77,7 @@ function downloadBlob(blob: Blob, filename: string) {
 
 export function resolveExportRows<TData>(
   table: Table<TData>,
-  scope: "current-page" | "selected" | "filtered-all"
+  scope: "current-page" | "selected" | "filtered-all",
 ): Row<TData>[] {
   switch (scope) {
     case "selected":

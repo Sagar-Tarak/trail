@@ -4,7 +4,10 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { Button, DatePicker, Select, Tag } from "antd";
 import dayjs from "dayjs";
 import { DataTable } from "@/components/DataTable";
-import type { ActiveFilter, DataTableQueryResult } from "@/components/DataTable";
+import type {
+  ActiveFilter,
+  DataTableQueryResult,
+} from "@/components/DataTable";
 
 interface Activity {
   id: string;
@@ -46,7 +49,9 @@ const columns = [
     size: 100,
     meta: { label: "ID" },
     cell: (info) => (
-      <span className="font-mono text-[11px] text-gray-400">{info.getValue()}</span>
+      <span className="font-mono text-[11px] text-gray-400">
+        {info.getValue()}
+      </span>
     ),
   }),
   col.accessor("user", {
@@ -66,9 +71,7 @@ const columns = [
     header: "Module",
     size: 120,
     meta: { label: "Module" },
-    cell: (info) => (
-      <span className="text-gray-500">{info.getValue()}</span>
-    ),
+    cell: (info) => <span className="text-gray-500">{info.getValue()}</span>,
   }),
   col.accessor("action", {
     header: "Action",
@@ -80,7 +83,10 @@ const columns = [
     size: 110,
     meta: { label: "Status" },
     cell: (info) => (
-      <Tag color={STATUS_COLORS[info.getValue()] ?? "default"} className="capitalize text-[11px]">
+      <Tag
+        color={STATUS_COLORS[info.getValue()] ?? "default"}
+        className="capitalize text-[11px]"
+      >
         {info.getValue()}
       </Tag>
     ),
@@ -90,7 +96,10 @@ const columns = [
     size: 100,
     meta: { label: "Severity" },
     cell: (info) => (
-      <Tag color={SEVERITY_COLORS[info.getValue()] ?? "default"} className="capitalize text-[11px]">
+      <Tag
+        color={SEVERITY_COLORS[info.getValue()] ?? "default"}
+        className="capitalize text-[11px]"
+      >
         {info.getValue()}
       </Tag>
     ),
@@ -123,7 +132,9 @@ function ActivityFilterContent({
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <label className="mb-1.5 block text-xs font-medium text-gray-600">Module</label>
+        <label className="mb-1.5 block text-xs font-medium text-gray-600">
+          Module
+        </label>
         <Select
           value={local.module}
           onChange={(v: string) => patch("module", v)}
@@ -141,7 +152,9 @@ function ActivityFilterContent({
       </div>
 
       <div>
-        <label className="mb-1.5 block text-xs font-medium text-gray-600">Status</label>
+        <label className="mb-1.5 block text-xs font-medium text-gray-600">
+          Status
+        </label>
         <Select
           value={local.status}
           onChange={(v: string) => patch("status", v)}
@@ -158,7 +171,9 @@ function ActivityFilterContent({
       </div>
 
       <div>
-        <label className="mb-1.5 block text-xs font-medium text-gray-600">Severity</label>
+        <label className="mb-1.5 block text-xs font-medium text-gray-600">
+          Severity
+        </label>
         <Select
           value={local.severity}
           onChange={(v: string) => patch("severity", v)}
@@ -174,7 +189,9 @@ function ActivityFilterContent({
       </div>
 
       <div>
-        <label className="mb-1.5 block text-xs font-medium text-gray-600">Date range</label>
+        <label className="mb-1.5 block text-xs font-medium text-gray-600">
+          Date range
+        </label>
         <DatePicker.RangePicker
           className="w-full"
           value={
@@ -234,16 +251,28 @@ export function ActivityTable() {
       error: rawQuery.error,
       refetch: rawQuery.refetch,
     }),
-    [rawQuery]
+    [rawQuery],
   );
 
   // Build active filter badges from filters state
   const activeFilters: ActiveFilter[] = useMemo(() => {
     const result: ActiveFilter[] = [];
-    if (filters.module) result.push({ key: "module", label: "Module", value: filters.module });
-    if (filters.status) result.push({ key: "status", label: "Status", value: filters.status });
-    if (filters.severity) result.push({ key: "severity", label: "Severity", value: filters.severity });
-    if (filters.dateFrom) result.push({ key: "dateFrom", label: "From", value: dayjs(filters.dateFrom).format("DD MMM") });
+    if (filters.module)
+      result.push({ key: "module", label: "Module", value: filters.module });
+    if (filters.status)
+      result.push({ key: "status", label: "Status", value: filters.status });
+    if (filters.severity)
+      result.push({
+        key: "severity",
+        label: "Severity",
+        value: filters.severity,
+      });
+    if (filters.dateFrom)
+      result.push({
+        key: "dateFrom",
+        label: "From",
+        value: dayjs(filters.dateFrom).format("DD MMM"),
+      });
     return result;
   }, [filters]);
 
@@ -275,7 +304,10 @@ export function ActivityTable() {
       onFiltersChange={setFilters}
       onFilterRemove={handleFilterRemove}
       filterDrawerContent={(drawerProps) => (
-        <ActivityFilterContent {...drawerProps} filters={drawerProps.filters as ActivityFilters} />
+        <ActivityFilterContent
+          {...drawerProps}
+          filters={drawerProps.filters as ActivityFilters}
+        />
       )}
       onRowClick={(row) => {
         // Open your drawer here
@@ -286,7 +318,13 @@ export function ActivityTable() {
           <span className="text-xs font-medium text-blue-700">
             {selectedRows.length} selected
           </span>
-          <Button size="small" danger onClick={() => { /* bulk delete */ clearSelection(); }}>
+          <Button
+            size="small"
+            danger
+            onClick={() => {
+              /* bulk delete */ clearSelection();
+            }}
+          >
             Delete
           </Button>
           <Button size="small" onClick={clearSelection}>
@@ -301,7 +339,7 @@ export function ActivityTable() {
 }
 
 async function fetchActivities(
-  _filters: ActivityFilters
+  _filters: ActivityFilters,
 ): Promise<{ rows: Activity[]; total: number }> {
   // Replace with:
   // const { data } = await axios.get("/api/activities", { params: filters });
@@ -310,7 +348,13 @@ async function fetchActivities(
     id: `ACT-${String(i + 1).padStart(4, "0")}`,
     user: ["Priya Mehta", "Rohan Das", "Sita Rao"][i % 3],
     module: ["HRMS", "Finance", "CRM", "TMS", "Inventory"][i % 5],
-    action: ["Login", "Invoice approved", "Deal closed", "Route updated", "Stock adjusted"][i % 5],
+    action: [
+      "Login",
+      "Invoice approved",
+      "Deal closed",
+      "Route updated",
+      "Stock adjusted",
+    ][i % 5],
     status: (["success", "warning", "error", "info"] as const)[i % 4],
     severity: (["low", "medium", "high"] as const)[i % 3],
     ipAddress: `192.168.1.${i + 1}`,

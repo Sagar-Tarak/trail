@@ -8,9 +8,7 @@ import { SELECTION_COL_ID } from "../constants";
  * Creates the selection column definition for checkbox or radio mode.
  * Kept separate so it's easy to customise per-project.
  */
-export function createSelectionColumn<TData>(
-  mode: "checkbox" | "radio"
-) {
+export function createSelectionColumn<TData>(mode: "checkbox" | "radio") {
   const helper = createColumnHelper<TData>();
 
   return helper.display({
@@ -20,7 +18,9 @@ export function createSelectionColumn<TData>(
         <Checkbox
           checked={table.getIsAllPageRowsSelected()}
           indeterminate={table.getIsSomePageRowsSelected()}
-          onChange={(e: CheckboxChangeEvent) => table.toggleAllPageRowsSelected(e.target.checked)}
+          onChange={(e: CheckboxChangeEvent) =>
+            table.toggleAllPageRowsSelected(e.target.checked)
+          }
           aria-label="Select all rows on page"
         />
       ) : null,
@@ -28,7 +28,9 @@ export function createSelectionColumn<TData>(
       <Checkbox
         checked={row.getIsSelected()}
         disabled={!row.getCanSelect()}
-        onChange={(e: CheckboxChangeEvent) => row.toggleSelected(e.target.checked)}
+        onChange={(e: CheckboxChangeEvent) =>
+          row.toggleSelected(e.target.checked)
+        }
         onClick={(e: React.MouseEvent) => e.stopPropagation()}
         aria-label={`Select row ${row.id}`}
         {...(mode === "radio" ? { type: "radio" } : {})}

@@ -14,9 +14,7 @@ export function FilterDrawer({ open, onClose, children }: FilterDrawerProps) {
       onClose={onClose}
       placement="right"
       width={380}
-      title={
-        <span className="text-sm font-medium text-gray-800">Filters</span>
-      }
+      title={<span className="text-sm font-medium text-gray-800">Filters</span>}
       styles={{
         header: {
           borderBottom: "1px solid #E8EAED",

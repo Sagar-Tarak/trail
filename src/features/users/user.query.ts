@@ -14,14 +14,14 @@ function toUserBackendParams(p: ApiQueryParams): Record<string, unknown> {
     page: p.page,
     pageSize: p.pageSize,
   };
-  if (p.search)  out.search  = p.search;
+  if (p.search) out.search = p.search;
   if (p.sortKey) out.sortKey = p.sortKey;
   if (p.sortDir) out.sortDir = p.sortDir;
-  if (p.cursor)  out.cursor  = p.cursor;
+  if (p.cursor) out.cursor = p.cursor;
 
-  if (p["f.status"])  out.status  = p["f.status"];
-  if (p["f.role"])    out.role    = p["f.role"];
-  if (p["f.module"])  out.module  = p["f.module"];
+  if (p["f.status"]) out.status = p["f.status"];
+  if (p["f.role"]) out.role = p["f.role"];
+  if (p["f.module"]) out.module = p["f.module"];
   if (p["f.mfaEnabled"] != null) out.mfaEnabled = p["f.mfaEnabled"];
   if (p["f.eventCount.min"] != null) out.eventCountMin = p["f.eventCount.min"];
   if (p["f.eventCount.max"] != null) out.eventCountMax = p["f.eventCount.max"];

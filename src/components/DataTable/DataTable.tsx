@@ -35,7 +35,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     (next: Record<string, unknown>) => {
       onFiltersChange?.(next);
     },
-    [onFiltersChange]
+    [onFiltersChange],
   );
 
   const handleResetFilters = useCallback(() => {

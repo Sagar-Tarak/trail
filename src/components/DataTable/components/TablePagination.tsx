@@ -27,10 +27,16 @@ export function TablePagination<TData>({
       {/* Left: record count */}
       <div className="flex items-center gap-3">
         <span className="text-[11px] text-gray-500">
-          {total === 0 ? "No records" : `${from}–${to} of ${total.toLocaleString()}`}
+          {total === 0
+            ? "No records"
+            : `${from}–${to} of ${total.toLocaleString()}`}
         </span>
         {isFetching && (
-          <span className="h-3 w-3 animate-spin rounded-full border border-gray-200 border-t-blue-400" aria-label="Loading" role="status" />
+          <span
+            className="h-3 w-3 animate-spin rounded-full border border-gray-200 border-t-blue-400"
+            aria-label="Loading"
+            role="status"
+          />
         )}
       </div>
 
@@ -59,15 +65,30 @@ export function TablePagination<TData>({
           aria-label="Previous page"
           className="dt-page-btn disabled:opacity-30"
         >
-          <svg className="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+          <svg
+            className="h-3.5 w-3.5"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15.75 19.5 8.25 12l7.5-7.5"
+            />
           </svg>
         </button>
 
         {/* Page numbers */}
         {pages.map((p, i) =>
           p === "..." ? (
-            <span key={`ellipsis-${i}`} className="px-1 text-[11px] text-gray-400">
+            <span
+              key={`ellipsis-${i}`}
+              className="px-1 text-[11px] text-gray-400"
+            >
               …
             </span>
           ) : (
@@ -84,7 +105,7 @@ export function TablePagination<TData>({
             >
               {p}
             </button>
-          )
+          ),
         )}
 
         {/* Next */}
@@ -94,8 +115,20 @@ export function TablePagination<TData>({
           aria-label="Next page"
           className="dt-page-btn disabled:opacity-30"
         >
-          <svg className="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          <svg
+            className="h-3.5 w-3.5"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="m8.25 4.5 7.5 7.5-7.5 7.5"
+            />
           </svg>
         </button>
       </div>

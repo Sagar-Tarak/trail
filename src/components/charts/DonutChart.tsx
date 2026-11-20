@@ -1,4 +1,11 @@
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 import { TOOLTIP_STYLE } from "./chartTheme";
 
 export interface DonutSlice {
@@ -27,20 +34,40 @@ interface DonutChartProps {
   actions?: React.ReactNode;
 }
 
-function InlineLegend({ data, total, valueFormatter }: { data: DonutSlice[]; total: number; valueFormatter: (v: number) => string }) {
+function InlineLegend({
+  data,
+  total,
+  valueFormatter,
+}: {
+  data: DonutSlice[];
+  total: number;
+  valueFormatter: (v: number) => string;
+}) {
   return (
     <div className="flex flex-col gap-2.5 flex-1 min-w-0">
       {data.map((item) => {
         const pct = Math.round((item.value / total) * 100);
         return (
-          <div key={item.name} className="flex items-center justify-between gap-2">
+          <div
+            key={item.name}
+            className="flex items-center justify-between gap-2"
+          >
             <div className="flex items-center gap-2 min-w-0">
-              <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
-              <span className="truncate text-xs text-gray-600">{item.name}</span>
+              <span
+                className="h-2.5 w-2.5 shrink-0 rounded-full"
+                style={{ backgroundColor: item.color }}
+              />
+              <span className="truncate text-xs text-gray-600">
+                {item.name}
+              </span>
             </div>
             <div className="flex shrink-0 items-center gap-2">
-              <span className="text-xs font-semibold text-gray-800">{valueFormatter(item.value)}</span>
-              <span className="w-7 text-right text-xs text-gray-400">{pct}%</span>
+              <span className="text-xs font-semibold text-gray-800">
+                {valueFormatter(item.value)}
+              </span>
+              <span className="w-7 text-right text-xs text-gray-400">
+                {pct}%
+              </span>
             </div>
           </div>
         );
@@ -71,15 +98,23 @@ export function DonutChart({
         <div className="mb-4 flex items-start justify-between gap-4">
           {(title || subtitle) && (
             <div>
-              {title && <h3 className="text-sm font-semibold text-gray-800">{title}</h3>}
-              {subtitle && <p className="mt-0.5 text-xs text-gray-400">{subtitle}</p>}
+              {title && (
+                <h3 className="text-sm font-semibold text-gray-800">{title}</h3>
+              )}
+              {subtitle && (
+                <p className="mt-0.5 text-xs text-gray-400">{subtitle}</p>
+              )}
             </div>
           )}
-          {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
+          {actions && (
+            <div className="flex shrink-0 items-center gap-2">{actions}</div>
+          )}
         </div>
       )}
 
-      <div className={`flex items-center gap-6 ${inlineLegend ? "" : "justify-center"}`}>
+      <div
+        className={`flex items-center gap-6 ${inlineLegend ? "" : "justify-center"}`}
+      >
         <div className="relative shrink-0" style={{ width: height, height }}>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
@@ -95,29 +130,52 @@ export function DonutChart({
                 endAngle={-270}
               >
                 {data.map((entry) => (
-                  <Cell key={entry.name} fill={entry.color} stroke="transparent" />
+                  <Cell
+                    key={entry.name}
+                    fill={entry.color}
+                    stroke="transparent"
+                  />
                 ))}
               </Pie>
               <Tooltip
                 contentStyle={{ ...TOOLTIP_STYLE, padding: "6px 10px" }}
-                formatter={(v, name) => [valueFormatter(Number(v)), String(name)]}
+                formatter={(v, name) => [
+                  valueFormatter(Number(v)),
+                  String(name),
+                ]}
               />
               {showLegend && !inlineLegend && (
-                <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12 }} />
+                <Legend
+                  iconType="circle"
+                  iconSize={8}
+                  wrapperStyle={{ fontSize: 12 }}
+                />
               )}
             </PieChart>
           </ResponsiveContainer>
           {/* Center label */}
           {(centerLabel || centerSub) && (
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              {centerLabel && <span className="text-lg font-bold text-gray-900 leading-none">{centerLabel}</span>}
-              {centerSub && <span className="mt-0.5 text-[10px] text-gray-400">{centerSub}</span>}
+              {centerLabel && (
+                <span className="text-lg font-bold text-gray-900 leading-none">
+                  {centerLabel}
+                </span>
+              )}
+              {centerSub && (
+                <span className="mt-0.5 text-[10px] text-gray-400">
+                  {centerSub}
+                </span>
+              )}
             </div>
           )}
         </div>
 
         {inlineLegend && (
-          <InlineLegend data={data} total={total} valueFormatter={valueFormatter} />
+          <InlineLegend
+            data={data}
+            total={total}
+            valueFormatter={valueFormatter}
+          />
         )}
       </div>
     </div>

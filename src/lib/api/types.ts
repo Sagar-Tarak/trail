@@ -20,6 +20,7 @@ export interface ApiQueryParams {
 
 export interface ApiError {
   message: string;
+  fieldErrors?: { path: string; message: string }[];
   code?: string;
   status?: number;
 }

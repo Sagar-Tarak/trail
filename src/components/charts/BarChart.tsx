@@ -9,7 +9,12 @@ import {
   Legend,
   Cell,
 } from "recharts";
-import { TOOLTIP_STYLE, TOOLTIP_LABEL_STYLE, AXIS_STYLE, PALETTE } from "./chartTheme";
+import {
+  TOOLTIP_STYLE,
+  TOOLTIP_LABEL_STYLE,
+  AXIS_STYLE,
+  PALETTE,
+} from "./chartTheme";
 
 export interface BarSeries {
   key: string;
@@ -59,11 +64,17 @@ export function BarChart({
         <div className="mb-5 flex items-start justify-between gap-4">
           {(title || subtitle) && (
             <div>
-              {title && <h3 className="text-sm font-semibold text-gray-800">{title}</h3>}
-              {subtitle && <p className="mt-0.5 text-xs text-gray-400">{subtitle}</p>}
+              {title && (
+                <h3 className="text-sm font-semibold text-gray-800">{title}</h3>
+              )}
+              {subtitle && (
+                <p className="mt-0.5 text-xs text-gray-400">{subtitle}</p>
+              )}
             </div>
           )}
-          {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
+          {actions && (
+            <div className="flex shrink-0 items-center gap-2">{actions}</div>
+          )}
         </div>
       )}
 
@@ -74,16 +85,38 @@ export function BarChart({
           margin={{ top: 4, right: 8, left: horizontal ? 8 : -8, bottom: 0 }}
           barCategoryGap="28%"
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" horizontal={!horizontal} vertical={horizontal} />
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke="#f3f4f6"
+            horizontal={!horizontal}
+            vertical={horizontal}
+          />
           {horizontal ? (
             <>
-              <XAxis type="number" {...AXIS_STYLE} tickFormatter={(v: number) => (v >= 1000 ? `${(v/1000).toFixed(0)}k` : String(v))} />
-              <YAxis type="category" dataKey={xKey} {...AXIS_STYLE} width={64} />
+              <XAxis
+                type="number"
+                {...AXIS_STYLE}
+                tickFormatter={(v: number) =>
+                  v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)
+                }
+              />
+              <YAxis
+                type="category"
+                dataKey={xKey}
+                {...AXIS_STYLE}
+                width={64}
+              />
             </>
           ) : (
             <>
               <XAxis dataKey={xKey} {...AXIS_STYLE} dy={6} />
-              <YAxis {...AXIS_STYLE} tickFormatter={(v: number) => (v >= 1000 ? `${(v/1000).toFixed(0)}k` : String(v))} width={40} />
+              <YAxis
+                {...AXIS_STYLE}
+                tickFormatter={(v: number) =>
+                  v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)
+                }
+                width={40}
+              />
             </>
           )}
           <Tooltip
@@ -95,7 +128,13 @@ export function BarChart({
             }}
             cursor={{ fill: "#f9fafb" }}
           />
-          {showLegend && <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12 }} />}
+          {showLegend && (
+            <Legend
+              iconType="circle"
+              iconSize={8}
+              wrapperStyle={{ fontSize: 12 }}
+            />
+          )}
           {series.map((s, si) => (
             <Bar
               key={s.key}
@@ -103,12 +142,19 @@ export function BarChart({
               name={s.key}
               fill={s.color ?? PALETTE[si % PALETTE.length]}
               stackId={stackId}
-              radius={stacked ? (si === series.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]) : [4, 4, 0, 0]}
+              radius={
+                stacked
+                  ? si === series.length - 1
+                    ? [4, 4, 0, 0]
+                    : [0, 0, 0, 0]
+                  : [4, 4, 0, 0]
+              }
               maxBarSize={40}
             >
-              {multiColor && data.map((_, i) => (
-                <Cell key={i} fill={PALETTE[i % PALETTE.length]} />
-              ))}
+              {multiColor &&
+                data.map((_, i) => (
+                  <Cell key={i} fill={PALETTE[i % PALETTE.length]} />
+                ))}
             </Bar>
           ))}
         </ReBarChart>

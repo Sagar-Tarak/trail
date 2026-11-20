@@ -16,17 +16,17 @@ function toActivityBackendParams(p: ApiQueryParams): Record<string, unknown> {
     page: p.page,
     pageSize: p.pageSize,
   };
-  if (p.search)   out.search  = p.search;
-  if (p.sortKey)  out.sortKey = p.sortKey;
-  if (p.sortDir)  out.sortDir = p.sortDir;
-  if (p.cursor)   out.cursor  = p.cursor;
+  if (p.search) out.search = p.search;
+  if (p.sortKey) out.sortKey = p.sortKey;
+  if (p.sortDir) out.sortDir = p.sortDir;
+  if (p.cursor) out.cursor = p.cursor;
 
-  if (p["f.module"])           out.module      = p["f.module"];
-  if (p["f.status"])           out.status      = p["f.status"];
-  if (p["f.severity"])         out.severity    = p["f.severity"];
-  if (p["f.user"])             out.user        = p["f.user"];
-  if (p["f.dateRange.from"])   out.dateFrom    = p["f.dateRange.from"];
-  if (p["f.dateRange.to"])     out.dateTo      = p["f.dateRange.to"];
+  if (p["f.module"]) out.module = p["f.module"];
+  if (p["f.status"]) out.status = p["f.status"];
+  if (p["f.severity"]) out.severity = p["f.severity"];
+  if (p["f.user"]) out.user = p["f.user"];
+  if (p["f.dateRange.from"]) out.dateFrom = p["f.dateRange.from"];
+  if (p["f.dateRange.to"]) out.dateTo = p["f.dateRange.to"];
   if (p["f.duration.min"] != null) out.durationMin = p["f.duration.min"];
   if (p["f.duration.max"] != null) out.durationMax = p["f.duration.max"];
 
@@ -34,7 +34,10 @@ function toActivityBackendParams(p: ApiQueryParams): Record<string, unknown> {
 }
 
 function activitiesKey(params: QueryParams) {
-  return ["activities", toActivityBackendParams(buildApiParams(params))] as const;
+  return [
+    "activities",
+    toActivityBackendParams(buildApiParams(params)),
+  ] as const;
 }
 
 export function useActivitiesQuery(params: QueryParams): QueryResult<Activity> {
@@ -44,7 +47,11 @@ export function useActivitiesQuery(params: QueryParams): QueryResult<Activity> {
   const { data, isLoading, isFetching, error, refetch } = useQuery({
     queryKey: activitiesKey(params),
     queryFn: ({ signal }) =>
-      apiFetch<Activity>("/api/v1/activities", backendParams as ApiQueryParams, signal),
+      apiFetch<Activity>(
+        "/api/v1/activities",
+        backendParams as ApiQueryParams,
+        signal,
+      ),
     staleTime: 30_000,
     placeholderData: keepPreviousData,
   });
@@ -55,7 +62,11 @@ export function useActivitiesQuery(params: QueryParams): QueryResult<Activity> {
     qc.prefetchQuery({
       queryKey: activitiesKey(nextParams),
       queryFn: ({ signal }) =>
-        apiFetch<Activity>("/api/v1/activities", nextBackend as ApiQueryParams, signal),
+        apiFetch<Activity>(
+          "/api/v1/activities",
+          nextBackend as ApiQueryParams,
+          signal,
+        ),
       staleTime: 30_000,
     });
   }
