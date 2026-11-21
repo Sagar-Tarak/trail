@@ -71,6 +71,25 @@ export interface CaptureSlot extends Data {
   lastError: string | null;
   lagSeconds: number;
   publicationName: string;
+  fullHistory?: {
+    policy: string;
+    checkedAt: string;
+    ready: boolean;
+    tableCount: number;
+    blockedCount: number;
+    tables: Array<{
+      table: string;
+      identity: string;
+      error?: string;
+      sql?: string;
+    }>;
+  } | null;
+  captureScope?: {
+    policy: string;
+    version: number;
+    selectedTables: string[];
+    reviewedTables: string[];
+  } | null;
   tablesConfigured: unknown;
   connection?: {
     host: string;
@@ -78,6 +97,8 @@ export interface CaptureSlot extends Data {
     database: string;
     username: string;
     ssl: boolean;
+    sslCa?: string | null;
+    sslTrust?: "system" | "custom" | "legacy";
   };
 }
 export interface CaptureStatus extends Data {

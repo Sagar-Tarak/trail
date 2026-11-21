@@ -494,3 +494,11 @@
     padding: 11px 12px;
   }
 }
+
+.capture-ca {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+.capture-ca textarea {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}

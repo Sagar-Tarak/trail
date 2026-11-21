@@ -1,3 +1,5 @@
+import { DocumentTimeline } from "./DocumentTimeline";
+import { Tabs } from "antd";
 import { useCompanyScopeKey } from "./useCompanyScope";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -27,7 +29,7 @@ interface Filters {
   operation?: string;
   order: "asc" | "desc";
 }
-export function DocumentHistory({
+export function RecordFieldHistory({
   table,
   recordId,
   fieldOptions = [],
@@ -238,5 +240,31 @@ export function DocumentHistory({
         </>
       )}
     </div>
+  );
+}
+
+export function DocumentHistory(props: {
+  table: string;
+  recordId: string;
+  fieldOptions?: string[];
+}) {
+  return (
+    <Tabs
+      defaultActiveKey="document"
+      items={[
+        {
+          key: "document",
+          label: "Document across saves",
+          children: (
+            <DocumentTimeline table={props.table} documentId={props.recordId} />
+          ),
+        },
+        {
+          key: "row",
+          label: "This row’s field history",
+          children: <RecordFieldHistory {...props} />,
+        },
+      ]}
+    />
   );
 }

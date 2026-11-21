@@ -1,3 +1,4 @@
+import { ContextMessageSettings } from "./ContextMessageSettings";
 import { CaptureHealthPanel } from "./CaptureHealthPanel";
 import { useTimeZoneStore } from "@/store/useTimeZoneStore";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -92,6 +93,20 @@ export function CapturePage() {
   const [form] = Form.useForm();
   const hydratedSlot = useRef<string | undefined>(undefined);
   const [busy, setBusy] = useState("");
+  const [readingCa, setReadingCa] = useState(false);
+  const sslEnabled = Form.useWatch("ssl", form) ?? true;
+  const sslTrust = Form.useWatch("sslTrust", form) ?? "system";
+  const editedEndpoint = Form.useWatch(
+    (values) =>
+      JSON.stringify([
+        values.host,
+        values.port,
+        values.database,
+        values.username,
+        values.password || "",
+      ]),
+    form,
+  );
   const [error, setError] = useState("");
   const [result, setResult] = useState<Data>();
   const [connectionResult, setConnectionResult] = useState<Data>();
@@ -99,7 +114,6 @@ export function CapturePage() {
   const [appRoles, setAppRoles] = useState("");
   const [availableTables, setAvailableTables] = useState<string[]>();
   const selectedTables: string[] = Form.useWatch("tables", form) ?? [];
-  const tableScope = Form.useWatch("tableScope", form) ?? "selected";
   const status = useQuery({
     queryKey: ["capture-status"],
     queryFn: ({ signal }) =>
@@ -152,7 +166,7 @@ export function CapturePage() {
           Object.entries(data).filter(([key]) => key !== "availableTables"),
         ),
       );
-      setDone(name);
+      setDone(name.startsWith("ssl/") ? "ssl" : name);
       if (name === "setup") {
         form.setFieldValue("password", "");
         setAvailableTables(undefined);
@@ -170,16 +184,28 @@ export function CapturePage() {
     try {
       const v = await form.validateFields(
         name === "test-connection"
-          ? ["host", "port", "database", "username", "password", "ssl"]
+          ? [
+              "host",
+              "port",
+              "database",
+              "username",
+              "password",
+              "ssl",
+              "sslCa",
+              "sslTrust",
+            ]
           : undefined,
       );
-      const { tables, tableScope: scope, ...credentials } = v;
+      const { tables, sslCa, sslTrust: trust, ...credentials } = v;
       await action(name, {
         ...credentials,
+        ...(trust === "legacy"
+          ? {}
+          : { sslCa: credentials.ssl && trust === "custom" ? sslCa : null }),
         ...(name === "setup"
           ? {
               autoStart: false,
-              ...(scope !== "all" ? { tablesToCapture: tables } : {}),
+              tablesToCapture: tables,
             }
           : {}),
       });
@@ -187,9 +213,68 @@ export function CapturePage() {
       /* Form displays validation errors. */
     }
   }
-  const savedScope = status.data?.slots[0]?.tablesConfigured;
+  const savedSlot = status.data?.slots[0];
+  const savedConnection = savedSlot?.connection;
+  const unchangedEndpoint =
+    editedEndpoint ===
+    JSON.stringify([
+      savedConnection?.host,
+      savedConnection?.port,
+      savedConnection?.database,
+      savedConnection?.username,
+      "",
+    ]);
+  async function saveSslSettings() {
+    if (!savedSlot || !unchangedEndpoint) return;
+    try {
+      const values = await form.validateFields(["ssl", "sslCa", "sslTrust"]);
+      await action(`ssl/${encodeURIComponent(savedSlot.id)}`, {
+        ssl: true,
+        ...(values.sslTrust === "legacy"
+          ? {}
+          : { sslCa: values.sslTrust === "custom" ? values.sslCa : null }),
+      });
+    } catch {
+      /* The form shows validation errors. */
+    }
+  }
+  async function readCaFile(file: File | undefined) {
+    if (!file) return;
+    if (file.size > 65536) {
+      form.setFields([
+        { name: "sslCa", errors: ["Choose a PEM CA bundle up to 64 KiB"] },
+      ]);
+      return;
+    }
+    setReadingCa(true);
+    try {
+      const contents = await file.text();
+      form.setFieldValue("sslCa", contents);
+      form.setFields([{ name: "sslCa", errors: [] }]);
+      setAvailableTables(undefined);
+      setConnectionResult(undefined);
+      setDone("");
+      setResult(undefined);
+    } catch {
+      form.setFields([
+        { name: "sslCa", errors: ["The certificate file could not be read"] },
+      ]);
+    } finally {
+      setReadingCa(false);
+    }
+  }
+  const savedScope =
+    status.data?.slots[0]?.captureScope?.selectedTables ??
+    status.data?.slots[0]?.tablesConfigured;
   const savedTables = Array.isArray(savedScope)
-    ? savedScope.filter((table): table is string => typeof table === "string")
+    ? savedScope.filter(
+        (table): table is string =>
+          typeof table === "string" &&
+          table !== "triotrail.outbox" &&
+          /^[A-Za-z_][A-Za-z0-9_-]{0,62}\.[A-Za-z_][A-Za-z0-9_-]{0,62}$/.test(
+            table,
+          ),
+      )
     : [];
   const configured = !!status.data?.configured;
   const streaming = status.data?.slots.some(
@@ -217,6 +302,7 @@ export function CapturePage() {
     ];
   const tested = availableTables !== undefined;
   const resultMessage = {
+    ssl: "SSL trust settings saved and the saved database connection tested. Running capture uses the new trust on its next connection.",
     setup: "Capture settings saved. Continue with outbox installation below.",
     "setup-outbox":
       "Outbox installed. Connect actor attribution in your application, then verify the installation.",
@@ -291,13 +377,14 @@ export function CapturePage() {
               form={form}
               layout="vertical"
               initialValues={{
+                manageReplicaIdentity: true,
                 port: 5432,
                 ssl: true,
-                tableScope:
-                  configured && savedTables.length === 0 ? "all" : "selected",
+                sslTrust: "system",
+                sslCa: "",
                 tables: savedTables,
               }}
-              disabled={!!busy}
+              disabled={!!busy || readingCa}
               className="capture-form"
               onValuesChange={(changed) => {
                 if (
@@ -308,6 +395,8 @@ export function CapturePage() {
                     "username",
                     "password",
                     "ssl",
+                    "sslCa",
+                    "sslTrust",
                   ].some((key) => key in changed)
                 ) {
                   if (availableTables !== undefined)
@@ -396,15 +485,130 @@ export function CapturePage() {
                     <div>
                       <strong>Secure connection (SSL)</strong>
                       <p>
-                        Validates the database certificate. Private CAs require
-                        administrator setup.
+                        Verifies the database certificate and hostname. Use the
+                        certificate’s DNS hostname when connecting.
                       </p>
                     </div>
                     <Form.Item name="ssl" valuePropName="checked">
                       <Switch aria-label="Use SSL" />
                     </Form.Item>
                   </div>
+                  {sslEnabled && (
+                    <div className="capture-ca">
+                      <Form.Item name="sslTrust" label="Certificate trust">
+                        <Radio.Group
+                          options={[
+                            {
+                              value: "system",
+                              label: "System trusted certificates",
+                            },
+                            { value: "custom", label: "Custom CA certificate" },
+                            ...(savedConnection?.sslTrust === "legacy"
+                              ? [
+                                  {
+                                    value: "legacy",
+                                    label: "Existing server-managed CA",
+                                  },
+                                ]
+                              : []),
+                          ]}
+                        />
+                      </Form.Item>
+                      {sslTrust === "legacy" && (
+                        <Alert
+                          type="info"
+                          showIcon
+                          message="This connection uses the existing server-managed trust. Select Custom CA certificate to save trust specifically for this connection."
+                        />
+                      )}
+                      {sslTrust === "custom" && (
+                        <>
+                          <Form.Item
+                            label="Upload CA certificate"
+                            extra="Read locally into the field below. PEM CA bundles only, up to 64 KiB. Do not upload a private key."
+                          >
+                            <input
+                              type="file"
+                              aria-label="Upload CA certificate"
+                              accept=".pem,.crt,.cer,text/plain,application/x-pem-file"
+                              onChange={(event) => {
+                                void readCaFile(event.target.files?.[0]);
+                                event.target.value = "";
+                              }}
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            name="sslCa"
+                            label="Trusted CA certificate (PEM)"
+                            rules={[
+                              {
+                                required: true,
+                                whitespace: true,
+                                message:
+                                  "Upload or paste the trusted CA certificate",
+                              },
+                              { max: 65536 },
+                              {
+                                validator: (_, value) =>
+                                  typeof value === "string" &&
+                                  value.includes(
+                                    "-----BEGIN CERTIFICATE-----",
+                                  ) &&
+                                  !/-----BEGIN[^\n]*PRIVATE KEY-----/.test(
+                                    value,
+                                  )
+                                    ? Promise.resolve()
+                                    : Promise.reject(
+                                        new Error(
+                                          "Provide PEM CA certificates, not private keys or file paths",
+                                        ),
+                                      ),
+                              },
+                            ]}
+                            extra="Saved only for this connection. The backend validates the bundle and the database certificate; verification is never disabled."
+                          >
+                            <Input.TextArea
+                              aria-label="Trusted CA certificate (PEM)"
+                              rows={6}
+                              spellCheck={false}
+                              placeholder="-----BEGIN CERTIFICATE-----"
+                            />
+                          </Form.Item>
+                        </>
+                      )}
+                      {savedSlot && (
+                        <>
+                          <Button
+                            disabled={!!busy || readingCa || !unchangedEndpoint}
+                            loading={busy.startsWith("ssl/")}
+                            onClick={() => void saveSslSettings()}
+                          >
+                            Save SSL settings
+                          </Button>
+                          <p className="capture-hint">
+                            Tests and updates the saved connection’s SSL trust
+                            without reinstalling capture. Save other connection
+                            changes using Configure capture. Re-entered
+                            passwords are not used by this SSL-only action.
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
+                <Alert
+                  type="info"
+                  showIcon
+                  message="Full-history capture requires REPLICA IDENTITY FULL"
+                  description="FULL records previous non-key values and increases WAL volume. Setup applies it to selected tables and partitions before publishing. If it cannot be verified, Trail capture is blocked. Older WAL and TRUNCATE cannot recover missing previous values."
+                />
+                <Form.Item
+                  name="manageReplicaIdentity"
+                  label="Allow setup to apply FULL to selected tables"
+                  valuePropName="checked"
+                >
+                  <Switch />
+                </Form.Item>
                 <div className="capture-footer">
                   <span className="capture-hint">
                     Testing checks access and loads table names.
@@ -412,7 +616,7 @@ export function CapturePage() {
                   <Button
                     onClick={() => databaseAction("test-connection")}
                     loading={busy === "test-connection"}
-                    disabled={!!busy}
+                    disabled={!!busy || readingCa}
                   >
                     {tested ? "Test again" : "Test connection"}
                   </Button>
@@ -451,37 +655,18 @@ export function CapturePage() {
                 }
               >
                 <div className="capture-table-section">
-                  <Form.Item name="tableScope" className="capture-scope">
-                    <Radio.Group aria-label="Capture scope">
-                      <Radio value="selected">
-                        <span className="capture-choice-title">
-                          Specific tables
-                        </span>
-                        <span className="capture-choice-description">
-                          Choose the tables your company needs.
-                        </span>
-                      </Radio>
-                      <Radio value="all">
-                        <span className="capture-choice-title">
-                          All supported tables
-                        </span>
-                        <span className="capture-choice-description">
-                          Capture every supported table.
-                        </span>
-                      </Radio>
-                    </Radio.Group>
-                  </Form.Item>
+                  <Alert
+                    type="info"
+                    showIcon
+                    message="Only reviewed tables enter capture"
+                    description="Select business tables explicitly. New tables require review and another configuration save; sessions, GPS and notification tables are not added automatically. The attribution outbox is managed separately."
+                  />
                   <div className="capture-table-label">
                     <label htmlFor="tables">Tables to capture</label>
-                    <span>
-                      {tableScope === "all"
-                        ? "All tables"
-                        : `${selectedTables.length} selected`}
-                    </span>
+                    <span>{`${selectedTables.length} selected`}</span>
                   </div>
                   <Form.Item
                     name="tables"
-                    hidden={tableScope === "all"}
                     normalize={(values: string[]) => [
                       ...new Set(
                         values.map((table) => table.trim()).filter(Boolean),
@@ -490,7 +675,6 @@ export function CapturePage() {
                     rules={[
                       {
                         validator: (_, values: string[] | undefined) => {
-                          if (tableScope === "all") return Promise.resolve();
                           if (!values?.length)
                             return Promise.reject(
                               new Error("Select or enter at least one table"),
@@ -514,14 +698,6 @@ export function CapturePage() {
                       disabled={!!busy}
                     />
                   </Form.Item>
-                  {tableScope === "all" && (
-                    <Alert
-                      type="info"
-                      showIcon
-                      message="All supported tables will be captured"
-                      description="Switch to Specific tables to review individual tables or exclude token storage."
-                    />
-                  )}
                 </div>
                 <div className="capture-footer">
                   <span className="capture-hint">
@@ -529,7 +705,7 @@ export function CapturePage() {
                   </span>
                   <Popconfirm
                     title="Configure replication on this database?"
-                    description="Creates the replication slot and publication for capture."
+                    description="Applies FULL when allowed and saves the reviewed table list. Running capture is paused; the existing slot and checkpoint are preserved. Verify and activate afterward."
                     onConfirm={() => databaseAction("setup")}
                   >
                     <Button
@@ -642,7 +818,7 @@ export function CapturePage() {
             </Card>
           </>
         )}
-        {configured && <CaptureHealthPanel />}
+        <CaptureHealthPanel />
         {configured && (
           <Card
             className="capture-card"
@@ -665,6 +841,77 @@ export function CapturePage() {
                   description="Review the slot status and last error before relying on captured activity."
                 />
               )}
+              {status.data?.slots.map((slot) => (
+                <Card
+                  key={slot.id}
+                  size="small"
+                  title={`Previous values · ${slot.slotName}`}
+                >
+                  <Alert
+                    showIcon
+                    type={slot.fullHistory?.ready ? "info" : "warning"}
+                    message={
+                      slot.fullHistory
+                        ? slot.fullHistory.ready
+                          ? `FULL verified on ${slot.fullHistory.tableCount} tables`
+                          : `${slot.fullHistory.blockedCount} tables blocked`
+                        : "Full-history policy has not been checked"
+                    }
+                    description={
+                      slot.fullHistory
+                        ? `Checked ${formatTimestamp(slot.fullHistory.checkedAt, timeZone)}. Activation and reconnect always recheck. This does not repair older WAL or resolve continuity incidents.`
+                        : "Verify table identity before activation."
+                    }
+                  />
+                  {canManage && (
+                    <div style={{ display: "flex", gap: 8, marginBlock: 12 }}>
+                      <Button
+                        disabled={!!busy}
+                        onClick={() =>
+                          void action(`identity/${slot.id}`, { apply: false })
+                        }
+                      >
+                        Check FULL identity
+                      </Button>
+                      <Popconfirm
+                        title="Apply FULL to published tables and partitions?"
+                        description="Increases WAL volume. Uses short DDL lock timeouts; no slot or checkpoint is reset."
+                        onConfirm={() =>
+                          action(`identity/${slot.id}`, { apply: true })
+                        }
+                      >
+                        <Button disabled={!!busy}>Apply FULL and verify</Button>
+                      </Popconfirm>
+                    </div>
+                  )}
+                  {canManage && <ContextMessageSettings slotId={slot.id} />}
+                  {!!slot.fullHistory?.tables.length && (
+                    <Table
+                      rowKey="table"
+                      size="small"
+                      dataSource={slot.fullHistory.tables}
+                      pagination={{ pageSize: 10 }}
+                      scroll={{ x: 700 }}
+                      columns={[
+                        { title: "Blocked table", dataIndex: "table" },
+                        { title: "Identity", dataIndex: "identity" },
+                        { title: "Reason", dataIndex: "error" },
+                        {
+                          title: "DB administrator command",
+                          dataIndex: "sql",
+                          render: (value: string) => <code>{value}</code>,
+                        },
+                      ]}
+                    />
+                  )}
+                  {slot.fullHistory && slot.fullHistory.blockedCount > 100 && (
+                    <p>
+                      First 100 blocked tables shown. Repair these and check
+                      again for remaining failures.
+                    </p>
+                  )}
+                </Card>
+              ))}
               <Table<CaptureSlot>
                 rowKey="id"
                 pagination={false}
@@ -672,6 +919,14 @@ export function CapturePage() {
                 scroll={{ x: 1100 }}
                 columns={[
                   { title: "Slot", width: 320, dataIndex: "slotName" },
+                  {
+                    title: "Reviewed scope",
+                    width: 170,
+                    render: (_, slot) =>
+                      slot.captureScope?.policy === "EXPLICIT"
+                        ? `${slot.captureScope.selectedTables.length} selected tables`
+                        : "Legacy configuration: review table selection",
+                  },
                   {
                     title: "Status",
                     width: 110,

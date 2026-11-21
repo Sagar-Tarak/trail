@@ -1,3 +1,4 @@
+import { EventIntegrity } from "./EventIntegrity";
 import { useCompanyScopeKey } from "./useCompanyScope";
 import { businessOperationLabel } from "./activitySummary";
 import { useTimeZoneStore } from "@/store/useTimeZoneStore";
@@ -52,6 +53,7 @@ export function EventDetails({
   const softDeleted = action === "Soft deleted";
   return (
     <div className="event-details">
+      <EventIntegrity eventId={event.id} />
       <section className="event-summary">
         <p className="mb-3 text-sm text-slate-600">
           ERP company:{" "}
@@ -124,6 +126,30 @@ export function EventDetails({
             <strong>{request.device || "Not captured"}</strong>
           </div>
         </div>
+        {Array.isArray(event.document_links) &&
+          event.document_links
+            .filter(
+              (link) =>
+                link &&
+                typeof link.document_table === "string" &&
+                typeof link.document_id === "string" &&
+                !(
+                  link.document_table === historyTarget?.table &&
+                  link.document_id === historyTarget?.recordId
+                ),
+            )
+            .map((link) => (
+              <p
+                key={link.company_key + link.document_table + link.document_id}
+              >
+                <Link
+                  to={`/records?${new URLSearchParams({ table: link.document_table, recordId: link.document_id })}`}
+                >
+                  Document history: {link.display_id || link.document_id} ·{" "}
+                  {link.document_table}
+                </Link>
+              </p>
+            ))}
         {historyTarget && (
           <Link to={`/records?${new URLSearchParams(historyTarget)}`}>
             Follow this record’s history →
